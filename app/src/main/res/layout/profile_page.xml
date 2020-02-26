@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="profileAdapter"
+            type="com.example.recipemanager.profiles.ProfileRecyclerAdapter" />
+        <variable
+            name="viewModel"
+            type="com.example.recipemanager.profiles.ProfileViewModel" />
+    </data>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    >
+    <androidx.recyclerview.widget.RecyclerView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/profile_recycler" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/insert"
+        android:src="@drawable/ic_fab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:onClick="@{() -> viewModel.navigateToNewProfileFragmentWanted()}"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

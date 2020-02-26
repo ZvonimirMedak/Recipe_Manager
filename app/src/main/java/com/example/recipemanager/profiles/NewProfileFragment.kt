@@ -1,0 +1,59 @@
+package com.example.recipemanager.profiles
+
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import com.example.recipemanager.R
+import com.example.recipemanager.appDatabase.AppDatabase
+import com.example.recipemanager.databinding.AddNewProfileBinding
+import kotlinx.android.synthetic.main.add_new_profile.*
+
+class NewProfileFragment : Fragment(){
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val binding : AddNewProfileBinding = DataBindingUtil.inflate(inflater, R.layout.add_new_profile, container, false)
+        val application = requireNotNull(this.activity).application
+        val database = AppDatabase.getInstance(application)
+        val databaseDao = database.profileDao
+        val profileViewModel = ProfileViewModel(databaseDao)
+        val username = arguments!!.getString("username", "")
+        profileViewModel.username = username
+        binding.viewModel = profileViewModel
+        profileViewModel.navigateToProfileFragment.observe(this, Observer {
+            if(it == true){
+                activity!!.onBackPressed()
+//                this.findNavController().navigate(
+//                    NewProfileFragmentDirections.actionNewProfileFragmentToProfileFragment(username)
+//                )
+                profileViewModel.navigateToProfileFragmentDone()
+            }
+        })
+        binding.createButton.setOnClickListener {
+            val checkedBoxes = getAllBoxes()
+            profileViewModel.inputProfile(profile_name_edit.text.toString(), checkedBoxes, username)
+        }
+
+
+
+
+        return binding.root
+    }
+    private fun getAllBoxes() : ArrayList<Boolean>{
+        val list =  ArrayList<Boolean>()
+        list.add(lactose_intolerance_check.isChecked)
+        list.add(gluten_intolerance_check.isChecked)
+        list.add(caffeine_intolerance_check.isChecked)
+        list.add(fructose_intolerance_check.isChecked)
+        return list
+
+    }
+}
