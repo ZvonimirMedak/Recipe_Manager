@@ -19,12 +19,8 @@ import kotlinx.coroutines.withContext
 
 
 class ProfileRecyclerAdapter(
-    val onClickListener: ProfileOnClickListener
+    private val onClickListener: ProfileOnClickListener
 ) : ListAdapter<Profile, ProfileRecyclerAdapter.ViewHolder>(ProfileDiffCallback()) {
-
-
-
-
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

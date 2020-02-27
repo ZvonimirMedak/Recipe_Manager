@@ -2,6 +2,7 @@ package com.example.recipemanager.userlogin
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -28,12 +29,20 @@ class LogInFragment : Fragment() {
         databaseUserUtils = DatabaseUserUtils(application)
         val viewModel = LogInViewModel(activity!!, binding.root)
         binding.viewModel = viewModel
-
-
         setupNavigationObservers(viewModel)
-        setupOnClickListeners(binding, viewModel)
-
+        setupOnClickListeners(binding, viewModel, this)
+        setupOnTouchListeners(binding, this)
         return binding.root
+    }
+
+    private fun setupOnTouchListeners(binding: LogInBinding, logInFragment: LogInFragment) {
+        binding.root.setOnTouchListener(object : View.OnTouchListener{
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                databaseUserUtils.hideKeyboard(logInFragment)
+                return false
+            }
+
+        })
     }
 
     private fun setupNavigationObservers(viewModel: LogInViewModel) {
@@ -57,13 +66,14 @@ class LogInFragment : Fragment() {
         })
     }
 
-    private fun setupOnClickListeners(binding: LogInBinding, viewModel: LogInViewModel) {
+    private fun setupOnClickListeners(binding: LogInBinding, viewModel: LogInViewModel, fragment : LogInFragment) {
         binding.verifyButton.setOnClickListener {
             databaseUserUtils.onVerificationClicked(
                 binding.usernameEdit.text.toString(),
                 binding.passwordEdit.text.toString(),
                 viewModel
             )
+            databaseUserUtils.hideKeyboard(fragment)
         }
     }
 

@@ -26,9 +26,9 @@ import kotlinx.android.synthetic.main.popup.view.*
 
 class DetailRecipeFragment : Fragment() {
 
-    lateinit var adapter: IngredientsRecyclerAdapter
-    lateinit var databaseRecipeWithIngredientsUtils: DatabaseRecipeWithIngredientsUtils
-    lateinit var databaseIngredientsUtils: DatabaseIngredientsUtils
+    private lateinit var adapter: IngredientsRecyclerAdapter
+    private lateinit var databaseRecipeWithIngredientsUtils: DatabaseRecipeWithIngredientsUtils
+    private lateinit var databaseIngredientsUtils: DatabaseIngredientsUtils
 
     override fun onCreateView(
         inflater: LayoutInflater,

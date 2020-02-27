@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
 import kotlin.math.log
 
 class DetailProfileFragment : Fragment() {
-    lateinit var databaseProfileUtils: DatabaseProfileUtils
+    private lateinit var databaseProfileUtils: DatabaseProfileUtils
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

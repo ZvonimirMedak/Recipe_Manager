@@ -1,25 +1,16 @@
 package com.example.recipemanager.ingredients
 
-import android.util.Log
-import android.view.Gravity
+
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupWindow
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipemanager.appDatabase.*
 import com.example.recipemanager.databinding.IngredientListItemBinding
-import com.example.recipemanager.databinding.ProfileListItemBinding
-import com.example.recipemanager.profiles.ProfileDiffCallback
-import com.example.recipemanager.profiles.ProfileOnClickListener
-import com.example.recipemanager.profiles.ProfileRecyclerAdapter
-import kotlinx.android.synthetic.main.popup_delete.view.*
-import kotlinx.coroutines.*
 
 class IngredientsRecyclerAdapter(
-    val onClickListener: IngredientOnClickListener
+    private val onClickListener: IngredientOnClickListener
 ) : ListAdapter<Ingredient, IngredientsRecyclerAdapter.ViewHolder>(IngredientsDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)

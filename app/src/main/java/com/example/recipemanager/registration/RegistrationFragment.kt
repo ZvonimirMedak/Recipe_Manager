@@ -27,7 +27,6 @@ class RegistrationFragment : Fragment() {
         databaseUserUtils = DatabaseUserUtils(application)
         val viewModel = RegistrationViewModel(activity!!, binding.root)
         binding.viewModel = viewModel
-
         setupNavigationObserver(viewModel)
         setupOnClickListeners(binding, viewModel)
         return binding.root

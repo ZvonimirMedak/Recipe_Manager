@@ -90,6 +90,7 @@ class IngredientsFragment : Fragment() {
                     profileId = profileId
                 ), profileId
             )
+            viewModel.popupView.ingredient_edit.text.clear()
             viewModel.popupWindow.dismiss()
         }
 

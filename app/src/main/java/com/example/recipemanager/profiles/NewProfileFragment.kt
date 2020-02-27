@@ -1,8 +1,10 @@
 package com.example.recipemanager.profiles
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -31,7 +33,18 @@ class NewProfileFragment : Fragment() {
         binding.viewModel = viewModel
         setupNavigationObserver(viewModel)
         setupOnClickListeners(binding, viewModel, username!!)
+        setupTouchListener(binding, this)
         return binding.root
+    }
+
+    private fun setupTouchListener(binding: AddNewProfileBinding, fragment : NewProfileFragment) {
+        binding.root.setOnTouchListener(object : View.OnTouchListener{
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                databaseProfileUtils.hideKeyboard(fragment)
+                return false
+            }
+
+        })
     }
 
     private fun setupOnClickListeners(binding : AddNewProfileBinding, viewModel: ProfileViewModel, username : String ){

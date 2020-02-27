@@ -1,11 +1,14 @@
 package com.example.recipemanager.createRecipe
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.PopupWindow
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -26,7 +29,7 @@ import com.example.recipemanager.utils.DatabaseRecipeWithIngredientsUtils
 
 class CreateRecipeFragment : Fragment() {
     private lateinit var adapter: IngredientsRecyclerAdapter
-//    private lateinit var recipe: Recipe
+    //    private lateinit var recipe: Recipe
     private lateinit var databaseIngredientsUtils: DatabaseIngredientsUtils
     private lateinit var databaseRecipeWithIngredientsUtils: DatabaseRecipeWithIngredientsUtils
     override fun onCreateView(
@@ -49,14 +52,30 @@ class CreateRecipeFragment : Fragment() {
             photoUrl = "https://i.imgur.com/8DeRKmP.jpg"
         )*/
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
-            databaseIngredientsUtils.deleteRecipeIngredient(it,adapter = adapter, rootLayout = binding.root)
+            databaseIngredientsUtils.deleteRecipeIngredient(
+                it,
+                adapter = adapter,
+                rootLayout = binding.root
+            )
         })
         binding.createRecipeIngredientsRecycler.adapter = adapter
         binding.createRecipeIngredientsRecycler.layoutManager = LinearLayoutManager(activity)
         setupOnClickListeners(binding, viewModel, profileId)
         setupNavigationObserver(viewModel, profileId)
-
+        setupOnTouchListener(binding, this)
         return binding.root
+    }
+
+    private fun setupOnTouchListener(
+        binding: CreateRecipeBinding,
+        createRecipeFragment: CreateRecipeFragment
+    ) {
+        binding.root.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                databaseIngredientsUtils.hideKeyboard(createRecipeFragment)
+                return false
+            }
+        })
     }
 
     private fun setupOnClickListeners(
@@ -65,18 +84,33 @@ class CreateRecipeFragment : Fragment() {
         profileId: Long
     ) {
         binding.insertRecipeButton.setOnClickListener {
-            if(binding.photoUrlEdit.text.isEmpty()){
-                val recipe = Recipe(name = binding.recipeNameEdit.text.toString(), description = binding.descriptionEdit.text.toString(),
-                    timeToMake = binding.timeToMakeEdit.text.toString(), typeOfMeal = binding.typeOfMealEdit.text.toString(),
-                    gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked,
-                    caffeine = binding.caffeineCheck.isChecked, profileId = profileId)
+            if (binding.photoUrlEdit.text.isEmpty()) {
+                val recipe = Recipe(
+                    name = binding.recipeNameEdit.text.toString(),
+                    description = binding.descriptionEdit.text.toString(),
+                    timeToMake = binding.timeToMakeEdit.text.toString(),
+                    typeOfMeal = binding.typeOfMealEdit.text.toString(),
+                    gluten = binding.glutenCheck.isChecked,
+                    fructose = binding.fructoseCheck.isChecked,
+                    lactose = binding.lactoseCheck.isChecked,
+                    caffeine = binding.caffeineCheck.isChecked,
+                    profileId = profileId
+                )
                 databaseRecipeWithIngredientsUtils.insertRecipe(recipe, viewModel)
-            }else{
-                val recipe = Recipe(name = binding.recipeNameEdit.text.toString(), description = binding.descriptionEdit.text.toString(),
-                    timeToMake = binding.timeToMakeEdit.text.toString(), typeOfMeal = binding.typeOfMealEdit.text.toString(),
-                    gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked,
-                    caffeine = binding.caffeineCheck.isChecked, profileId = profileId
-                    ,photoUrl = binding.photoUrlEdit.text.toString())
+            } else {
+                val recipe = Recipe(
+                    name = binding.recipeNameEdit.text.toString(),
+                    description = binding.descriptionEdit.text.toString(),
+                    timeToMake = binding.timeToMakeEdit.text.toString(),
+                    typeOfMeal = binding.typeOfMealEdit.text.toString(),
+                    gluten = binding.glutenCheck.isChecked,
+                    fructose = binding.fructoseCheck.isChecked,
+                    lactose = binding.lactoseCheck.isChecked,
+                    caffeine = binding.caffeineCheck.isChecked,
+                    profileId = profileId
+                    ,
+                    photoUrl = binding.photoUrlEdit.text.toString()
+                )
                 databaseRecipeWithIngredientsUtils.insertRecipe(recipe, viewModel)
             }
 
@@ -96,7 +130,7 @@ class CreateRecipeFragment : Fragment() {
         }
     }
 
-    private fun setupNavigationObserver(viewModel: CreateRecipeViewModel, profileId : Long) {
+    private fun setupNavigationObserver(viewModel: CreateRecipeViewModel, profileId: Long) {
         viewModel.navigateToAllRecipes.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 this.findNavController().navigate(

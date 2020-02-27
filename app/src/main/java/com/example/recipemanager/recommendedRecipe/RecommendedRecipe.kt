@@ -8,14 +8,12 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipemanager.R
-import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.databinding.RecommendedRecipesBinding
 import com.example.recipemanager.recipe.AllRecipeRecyclerAdapter
 import com.example.recipemanager.recipe.RecipeOnClickListener
 import com.example.recipemanager.utils.DatabaseRecipeUtils
 
 class RecommendedRecipe : Fragment() {
-
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.error_popup.view.*
 import kotlinx.coroutines.*
 
 class DatabaseRecipeWithIngredientsUtils (application: Application){
-    val database = AppDatabase.getInstance(application)
+    private val database = AppDatabase.getInstance(application)
     private val recipeDao = database.recipeDao
     private val ingredientDao = database.ingredientDao
     private val favouriteDao = database.favouriteDao

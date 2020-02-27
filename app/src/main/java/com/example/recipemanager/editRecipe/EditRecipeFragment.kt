@@ -2,6 +2,7 @@ package com.example.recipemanager.editRecipe
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
@@ -24,9 +25,9 @@ import com.example.recipemanager.utils.DatabaseRecipeUtils
 
 class EditRecipeFragment : Fragment(){
 
-    lateinit var adapter: IngredientsRecyclerAdapter
-    lateinit var databaseRecipeUtils : DatabaseRecipeUtils
-    lateinit var databaseIngredientsUtils: DatabaseIngredientsUtils
+    private lateinit var adapter: IngredientsRecyclerAdapter
+    private lateinit var databaseRecipeUtils : DatabaseRecipeUtils
+    private lateinit var databaseIngredientsUtils: DatabaseIngredientsUtils
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -43,13 +44,24 @@ class EditRecipeFragment : Fragment(){
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
             databaseIngredientsUtils.deleteRecipeIngredient(it, recipe!!.recipeId, adapter, binding.root)
         })
-
         binding.createRecipeIngredientsRecycler.adapter = adapter
         binding.createRecipeIngredientsRecycler.layoutManager = LinearLayoutManager(activity)
         databaseIngredientsUtils.submitRecipeList(adapter, recipe!!.recipeId)
         setupOnClickListeners(binding, viewModel, recipe)
         setupNavigationObserver(viewModel, profileId)
+        setupOnTouchListener(binding, this)
         return binding.root
+    }
+
+    private fun setupOnTouchListener(binding: CreateRecipeBinding, editRecipeFragment: EditRecipeFragment) {
+        binding.root.setOnTouchListener(object : View.OnTouchListener{
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                databaseIngredientsUtils.hideKeyboard(editRecipeFragment)
+                return true
+            }
+
+        })
+
     }
 
     private fun setupNavigationObserver(viewModel: EditRecipeViewModel, profileId : Long){

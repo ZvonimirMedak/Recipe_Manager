@@ -1,6 +1,8 @@
 package com.example.recipemanager.ingredients
 
 import android.app.Activity
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -46,6 +48,10 @@ class IngredientsViewModel(
         popupView = inflater.inflate(R.layout.popup, null)
         popupWindow.contentView = popupView
         popupWindow.isFocusable = true
+        popupWindow.setBackgroundDrawable(
+            ColorDrawable(
+                Color.TRANSPARENT)
+        )
     }
 
     fun navigateToFavouriteRecipes() {

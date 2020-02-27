@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AllRecipeRecyclerAdapter(
-    val onClickListener: RecipeOnClickListener
+    private val onClickListener: RecipeOnClickListener
 ) : ListAdapter<Recipe, AllRecipeRecyclerAdapter.ViewHolder>(RecipeDiffCallback()) {
 
     override fun onCreateViewHolder(
