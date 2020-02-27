@@ -1,6 +1,7 @@
 package com.example.recipemanager.ingredients
 
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +16,13 @@ import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.appDatabase.Ingredient
 import com.example.recipemanager.databinding.MyIngredientsBinding
+import com.example.recipemanager.utils.DatabaseIngredientsUtils
 import kotlinx.android.synthetic.main.popup.view.*
 
 
 class IngredientsFragment : Fragment() {
     lateinit var adapter: IngredientsRecyclerAdapter
+    lateinit var databaseIngredientsUtils : DatabaseIngredientsUtils
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -28,42 +31,32 @@ class IngredientsFragment : Fragment() {
         val binding: MyIngredientsBinding =
             DataBindingUtil.inflate(inflater, R.layout.my_ingredients, container, false)
         val application = requireNotNull(this.activity).application
-        val database = AppDatabase.getInstance(application)
-        val ingredientDao = database.ingredientDao
+        databaseIngredientsUtils = DatabaseIngredientsUtils(application)
         val profileId = arguments!!.getLong("profileId", 0)
-        val popupWindow = PopupWindow(activity)
-        val popupView = inflater.inflate(R.layout.popup, null)
-        val deletePopup = PopupWindow(activity)
-        val deletePopupView = inflater.inflate(R.layout.popup_delete, null)
-        deletePopup.isFocusable = true
-        deletePopup.contentView = deletePopupView
-        val viewModel =
-            IngredientsViewModel(ingredientDao, deletePopup, deletePopupView, binding.root)
+        val viewModel = IngredientsViewModel(activity!!)
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
-            adapter.deleteIngredient(it)
-        }, ingredientDao, deletePopup, deletePopupView, binding.root, profileId)
-
-        popupWindow.isFocusable = true
-        popupWindow.contentView = popupView
-        popupView.insert_button.setOnClickListener {
-            adapter.insertNewIngredient(
-                Ingredient(
-                    ingredientText = popupView.ingredient_edit.text.toString(),
-                    profileId = profileId
-                ), profileId
-            )
-            popupWindow.dismiss()
-        }
-        viewModel.navigateToAllRecipes.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-                this.findNavController().navigate(
-                    IngredientsFragmentDirections.actionIngredientsFragmentToAllRecipesFragment2(
-                        profileId
-                    )
-                )
-                viewModel.navigationToAllRecipesDone()
-            }
+            databaseIngredientsUtils.deleteIngredient(it, profileId, adapter, binding.root)
         })
+        binding.myIngredientsRecycler.layoutManager = LinearLayoutManager(context)
+        binding.myIngredientsRecycler.adapter = adapter
+        databaseIngredientsUtils.submitNewList(adapter,profileId)
+        setupNavigationObservers(viewModel, profileId)
+        setupOnClickListeners(viewModel, profileId, binding)
+        return binding.root
+
+    }
+
+    private fun setupNavigationObservers(viewModel: IngredientsViewModel, profileId: Long) {
+        viewModel.navigateToAllRecipes.observe(viewLifecycleOwner, Observer {
+        if (it == true) {
+            this.findNavController().navigate(
+                IngredientsFragmentDirections.actionIngredientsFragmentToAllRecipesFragment2(
+                    profileId
+                )
+            )
+            viewModel.navigationToAllRecipesDone()
+        }
+    })
 
         viewModel.navigateToRecommendedRecipes.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -86,6 +79,20 @@ class IngredientsFragment : Fragment() {
             }
         })
 
+    }
+
+    private fun setupOnClickListeners(viewModel: IngredientsViewModel, profileId: Long, binding: MyIngredientsBinding){
+        viewModel.popupView.insert_button.setOnClickListener {
+            databaseIngredientsUtils.insertNewIngredient(
+                adapter,
+                Ingredient(
+                    ingredientText = viewModel.popupView.ingredient_edit.text.toString(),
+                    profileId = profileId
+                ), profileId
+            )
+            viewModel.popupWindow.dismiss()
+        }
+
         binding.allRecipesButton.setOnClickListener {
             viewModel.navigateToAllRecipes()
         }
@@ -95,15 +102,9 @@ class IngredientsFragment : Fragment() {
         binding.favouriteRecipesButton.setOnClickListener {
             viewModel.navigateToFavouriteRecipes()
         }
-
-        binding.myIngredientsRecycler.layoutManager = LinearLayoutManager(context)
-        binding.myIngredientsRecycler.adapter = adapter
-        adapter.submitNewList(profileId)
         binding.fabIngredients.setOnClickListener {
-            popupWindow.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
+            viewModel.popupWindow.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
         }
-        return binding.root
-
     }
 
 }

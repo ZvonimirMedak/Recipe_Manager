@@ -1,4 +1,4 @@
-package com.example.recipemanager.recipe
+package com.example.recipemanager.recommendedRecipe
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -101,7 +101,7 @@
     </fragment>
     <fragment
         android:id="@+id/recommendedRecipe2"
-        android:name="com.example.recipemanager.recipe.RecommendedRecipe"
+        android:name="com.example.recipemanager.recommendedRecipe.RecommendedRecipe"
         android:label="RecommendedRecipe" >
         <argument
             android:name="profileId"

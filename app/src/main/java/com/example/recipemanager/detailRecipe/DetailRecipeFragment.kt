@@ -20,11 +20,15 @@ import com.example.recipemanager.databinding.DetailRecipeBinding
 import com.example.recipemanager.ingredients.IngredientOnClickListener
 import com.example.recipemanager.ingredients.IngredientsRecyclerAdapter
 import com.example.recipemanager.ingredients.IngredientsViewModel
+import com.example.recipemanager.utils.DatabaseIngredientsUtils
+import com.example.recipemanager.utils.DatabaseRecipeWithIngredientsUtils
 import kotlinx.android.synthetic.main.popup.view.*
 
 class DetailRecipeFragment : Fragment() {
 
     lateinit var adapter: IngredientsRecyclerAdapter
+    lateinit var databaseRecipeWithIngredientsUtils: DatabaseRecipeWithIngredientsUtils
+    lateinit var databaseIngredientsUtils: DatabaseIngredientsUtils
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,49 +38,56 @@ class DetailRecipeFragment : Fragment() {
         val binding: DetailRecipeBinding =
             DataBindingUtil.inflate(inflater, R.layout.detail_recipe, container, false)
         val recipe = arguments!!.getParcelable<Recipe>("recipe")
-        val profileId = arguments!!.getLong("profileId", 0)
+        val profileId = arguments!!.getLong("profileId")
         binding.recipe = recipe
         val application = requireNotNull(this.activity).application
-        val database = AppDatabase.getInstance(application)
-        val ingredientDao = database.ingredientDao
-        val recipeDao = database.recipeDao
-        val favouriteDao = database.favouriteDao
-        val viewModel = DetailRecipeViewModel(recipeDao, ingredientDao, favouriteDao)
-        viewModel.checkFavourite(recipe!!.recipeId, profileId)
-        val popupWindow = PopupWindow(activity)
-        val popupView = inflater.inflate(R.layout.popup, null)
-        val deletePopup = PopupWindow(activity)
-        val deletePopupView = inflater.inflate(R.layout.popup_delete, null)
+        databaseRecipeWithIngredientsUtils = DatabaseRecipeWithIngredientsUtils(application)
+        databaseIngredientsUtils = DatabaseIngredientsUtils(application)
+        val viewModel = DetailRecipeViewModel(activity!!)
+        databaseRecipeWithIngredientsUtils.checkFavourite(recipe!!.recipeId, profileId, viewModel)
         Glide.with(binding.recipeImage).load(recipe.photoUrl).optionalCenterCrop()
             .into(binding.recipeImage)
-        deletePopup.isFocusable = true
-        deletePopup.contentView = deletePopupView
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
-        }, ingredientDao, deletePopup, deletePopupView, binding.root, profileId)
-
-        popupWindow.isFocusable = true
-        popupWindow.contentView = popupView
-        viewModel.favouriteChecker.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-                binding.favouriteButton.setImageResource(R.drawable.baseline_favorite_black_18dp)
-            }
-            if (it == null) {
-                binding.favouriteButton.setImageResource(R.drawable.favourite_border)
-            }
-
         })
-        popupView.insert_button.setOnClickListener {
-            adapter.insertNewIngredient(
+        binding.ingredientsRecipeRecycler.layoutManager = LinearLayoutManager(activity)
+        binding.ingredientsRecipeRecycler.adapter = adapter
+        databaseIngredientsUtils.submitRecipeList(adapter, recipe.recipeId)
+        setupOnClickListeners(binding, viewModel, recipe, profileId)
+        setupObservers(viewModel, recipe, profileId, binding)
+        return binding.root
+    }
+
+    private fun setupOnClickListeners(binding: DetailRecipeBinding, viewModel: DetailRecipeViewModel, recipe : Recipe, profileId : Long){
+        binding.favouriteButton.setOnClickListener {
+            databaseRecipeWithIngredientsUtils.createFavouriteRecipe(recipe.recipeId, profileId, viewModel)
+        }
+        binding.editRecipeButton.setOnClickListener {
+            viewModel.navigateToEditRecipe()
+        }
+        binding.deleteRecipeButton.setOnClickListener {
+            databaseRecipeWithIngredientsUtils.deleteRecipe(recipe, profileId, viewModel)
+        }
+        viewModel.popupView.insert_button.setOnClickListener {
+            databaseIngredientsUtils.insertNewIngredient(
+                adapter,
                 Ingredient(
-                    ingredientText = popupView.ingredient_edit.text.toString(),
+                    ingredientText = viewModel.popupView.ingredient_edit.text.toString(),
                     profileId = profileId
                 ), profileId
             )
-            popupWindow.dismiss()
+            viewModel.popupWindow.dismiss()
         }
-        binding.deleteRecipeButton.setOnClickListener {
-            viewModel.deleteRecipe(recipe, profileId)
-        }
+    }
+
+    private fun setupObservers(viewModel: DetailRecipeViewModel, recipe: Recipe, profileId: Long, binding: DetailRecipeBinding){
+        viewModel.navigateToEditRecipe.observe(viewLifecycleOwner, Observer {
+            if(it == true){
+                this.findNavController().navigate(
+                    DetailRecipeFragmentDirections.actionDetailRecipeFragmentToEditRecipeFragment(recipe, profileId)
+                )
+                viewModel.navigationToEditRecipeDone()
+            }
+        })
         viewModel.navigationToAllRecipes.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 this.findNavController().navigate(
@@ -87,30 +98,20 @@ class DetailRecipeFragment : Fragment() {
                 viewModel.navigationToAllRecipesDone()
             }
         })
-        binding.editRecipeButton.setOnClickListener {
-            viewModel.navigateToEditRecipe()
-        }
+
         viewModel.navigateToEditRecipe.observe(viewLifecycleOwner, Observer {
             if(it == true){
                 this.findNavController()
             }
         })
-        binding.ingredientsRecipeRecycler.layoutManager = LinearLayoutManager(activity)
-        binding.ingredientsRecipeRecycler.adapter = adapter
-        Log.d("msgrecipe", recipe.recipeId.toString())
-        adapter.submitRecipeList(recipe.recipeId)
-        binding.favouriteButton.setOnClickListener {
-            viewModel.createFavouriteRecipe(recipe.recipeId, profileId)
-        }
-        viewModel.navigateToEditRecipe.observe(viewLifecycleOwner, Observer {
-            if(it == true){
-                this.findNavController().navigate(
-                    DetailRecipeFragmentDirections.actionDetailRecipeFragmentToEditRecipeFragment(recipe, profileId)
-                )
-                viewModel.navigationToEditRecipeDone()
+        viewModel.favouriteChecker.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                binding.favouriteButton.setImageResource(R.drawable.baseline_favorite_black_18dp)
             }
-        })
+            if (it == null) {
+                binding.favouriteButton.setImageResource(R.drawable.favourite_border)
+            }
 
-        return binding.root
+        })
     }
 }

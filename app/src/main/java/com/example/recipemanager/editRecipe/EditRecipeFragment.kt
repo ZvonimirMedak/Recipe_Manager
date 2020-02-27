@@ -19,11 +19,14 @@ import com.example.recipemanager.appDatabase.Recipe
 import com.example.recipemanager.databinding.CreateRecipeBinding
 import com.example.recipemanager.ingredients.IngredientOnClickListener
 import com.example.recipemanager.ingredients.IngredientsRecyclerAdapter
+import com.example.recipemanager.utils.DatabaseIngredientsUtils
+import com.example.recipemanager.utils.DatabaseRecipeUtils
 
 class EditRecipeFragment : Fragment(){
 
     lateinit var adapter: IngredientsRecyclerAdapter
-
+    lateinit var databaseRecipeUtils : DatabaseRecipeUtils
+    lateinit var databaseIngredientsUtils: DatabaseIngredientsUtils
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -34,25 +37,22 @@ class EditRecipeFragment : Fragment(){
         val profileId = arguments!!.getLong("profileId")
         setupUI(recipe, binding)
         val application = requireNotNull(this.activity).application
-        val database = AppDatabase.getInstance(application)
-        val ingredientDao = database.ingredientDao
-        val recipeDao = database.recipeDao
-        val viewModel = EditRecipeViewModel(recipeDao)
-        val deletePopup = PopupWindow(activity)
-        val deletePopupView = inflater.inflate(R.layout.popup_delete, null)
-        deletePopup.isFocusable = true
-        deletePopup.contentView = deletePopupView
+        databaseIngredientsUtils = DatabaseIngredientsUtils(application)
+        databaseRecipeUtils = DatabaseRecipeUtils(application)
+        val viewModel = EditRecipeViewModel()
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
-            adapter.deleteRecipeIngredient(it, recipe!!.recipeId)
-        }, ingredientDao, deletePopup, deletePopupView, binding.root, profileId)
+            databaseIngredientsUtils.deleteRecipeIngredient(it, recipe!!.recipeId, adapter, binding.root)
+        })
 
         binding.createRecipeIngredientsRecycler.adapter = adapter
         binding.createRecipeIngredientsRecycler.layoutManager = LinearLayoutManager(activity)
-        adapter.submitRecipeList(recipe!!.recipeId)
-        binding.ingredientButton.setOnClickListener {
-            adapter.createRecipeIngredient(Ingredient(ingredientText = binding.ingredientEditRecipe.text.toString(), recipeId = recipe.recipeId), recipe.recipeId)
-            binding.ingredientEditRecipe.text.clear()
-        }
+        databaseIngredientsUtils.submitRecipeList(adapter, recipe!!.recipeId)
+        setupOnClickListeners(binding, viewModel, recipe)
+        setupNavigationObserver(viewModel, profileId)
+        return binding.root
+    }
+
+    private fun setupNavigationObserver(viewModel: EditRecipeViewModel, profileId : Long){
         viewModel.navigateToDetailRecipe.observe(viewLifecycleOwner, Observer {
             if(it != null) {
                 this.findNavController().navigate(
@@ -63,17 +63,7 @@ class EditRecipeFragment : Fragment(){
                 )
                 viewModel.navigationToDetailRecipeDone()
             }})
-        binding.insertRecipeButton.setOnClickListener {
-            viewModel.updateRecipe(Recipe(
-                recipeId = recipe.recipeId, name = binding.recipeNameEdit.text.toString(), timeToMake = binding.timeToMakeEdit.text.toString(),
-                typeOfMeal = binding.typeOfMealEdit.text.toString(), photoUrl = binding.photoUrlEdit.text.toString(), description = binding.descriptionEdit.text.toString(),
-                gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked, caffeine = binding.caffeineCheck.isChecked
-            ))
-        }
-
-        return binding.root
     }
-
 
     private fun setupUI(recipe: Recipe?, binding : CreateRecipeBinding) {
         binding.recipeNameEdit.setText(recipe!!.name)
@@ -86,5 +76,20 @@ class EditRecipeFragment : Fragment(){
         binding.caffeineCheck.isChecked = recipe.caffeine
         binding.fructoseCheck.isChecked = recipe.fructose
         binding.insertRecipeButton.setText(R.string.update)
+    }
+
+    private fun setupOnClickListeners(binding: CreateRecipeBinding, viewModel: EditRecipeViewModel, recipe: Recipe){
+        binding.ingredientButton.setOnClickListener {
+            databaseIngredientsUtils.createRecipeIngredient(adapter,Ingredient(ingredientText = binding.ingredientEditRecipe.text.toString(), recipeId = recipe.recipeId), recipe.recipeId)
+            binding.ingredientEditRecipe.text.clear()
+        }
+
+        binding.insertRecipeButton.setOnClickListener {
+            databaseRecipeUtils.updateRecipe(Recipe(
+                recipeId = recipe.recipeId, name = binding.recipeNameEdit.text.toString(), timeToMake = binding.timeToMakeEdit.text.toString(),
+                typeOfMeal = binding.typeOfMealEdit.text.toString(), photoUrl = binding.photoUrlEdit.text.toString(), description = binding.descriptionEdit.text.toString(),
+                gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked, caffeine = binding.caffeineCheck.isChecked
+            ), viewModel)
+        }
     }
 }

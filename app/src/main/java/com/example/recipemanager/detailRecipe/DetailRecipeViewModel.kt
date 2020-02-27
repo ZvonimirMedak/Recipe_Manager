@@ -1,21 +1,27 @@
 package com.example.recipemanager.detailRecipe
 
+import android.app.Activity
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.PopupWindow
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.*
 import kotlinx.coroutines.*
 
-class DetailRecipeViewModel(
-    val recipeDao: RecipeDao,
-    val ingredientDao: IngredientDao,
-    val favouriteDao: FavouriteDao
-) : ViewModel() {
-    private val job = Job()
-    private val coroutineScope = CoroutineScope(job + Dispatchers.IO)
+class DetailRecipeViewModel(private val activity: Activity): ViewModel() {
 
     val favouriteChecker = MutableLiveData<Boolean?>()
 
+    lateinit var popupView : View
+    lateinit var popupWindow : PopupWindow
+
+
+    init {
+        setupPopupWindows()
+    }
     private val _navigationToAllRecipes = MutableLiveData<Boolean?>()
     val navigationToAllRecipes: LiveData<Boolean?>
         get() = _navigationToAllRecipes
@@ -23,6 +29,8 @@ class DetailRecipeViewModel(
     private val _navigateToEditRecipe = MutableLiveData<Boolean?>()
     val navigateToEditRecipe : LiveData<Boolean?>
     get() = _navigateToEditRecipe
+
+
 
     fun navigateToEditRecipe(){
         _navigateToEditRecipe.value = true
@@ -32,7 +40,7 @@ class DetailRecipeViewModel(
         _navigateToEditRecipe.value = null
     }
 
-    private fun navigationToAllRecipesWanted() {
+    fun navigateToAllRecipes() {
         _navigationToAllRecipes.value = true
     }
 
@@ -40,58 +48,13 @@ class DetailRecipeViewModel(
         _navigationToAllRecipes.value = null
     }
 
-    fun deleteRecipe(recipe: Recipe, profileId: Long) {
-        coroutineScope.launch {
-            val favourite = favouriteDao.getFavouriteRecipe(profileId, recipe.recipeId)
-            if (favourite != null) {
-                favouriteDao.deleteFavourite(favourite.favouriteId)
-            }
-            recipeDao.deleteRecipe(recipe.recipeId)
-            val list = getRecipeIngredients(recipe.recipeId)
-            for (ingredient in list!!) {
-                ingredientDao.deleteIngredient(ingredient.ingredientId)
-            }
-        }
-        navigationToAllRecipesWanted()
-    }
+    private fun setupPopupWindows(){
 
-    private fun getRecipeIngredients(recipeId: Long) =
-        ingredientDao.getAllRecipeIngredients(recipeId)
+        val inflater = LayoutInflater.from(activity)
 
-    fun createFavouriteRecipe(recipeId: Long, profileId: Long) {
-        coroutineScope.launch {
-            if (favouriteChecker.value == null) {
-                favouriteDao.insertFavourite(Favourite(profileId = profileId, recipeId = recipeId))
-                checkFavourite(recipeId, profileId)
-            } else {
-                withContext(Dispatchers.Main) {
-                    favouriteChecker.value = null
-                }
-                val favourite = favouriteDao.getFavouriteRecipe(profileId, recipeId)
-                favouriteDao.deleteFavourite(favourite!!.favouriteId)
-            }
-
-        }
-    }
-
-    fun checkFavourite(recipeId: Long, profileId: Long) {
-        coroutineScope.launch {
-            val list = getFavourites(profileId)
-            if (list != null) {
-                for (favourite in list) {
-                    if (favourite.recipeId == recipeId)
-                        withContext(Dispatchers.Main) {
-                            favouriteChecker.value = true
-                        }
-                }
-            }
-        }
-
-    }
-
-    private fun getFavourites(profileId: Long) = favouriteDao.getAllProfileFavouirtes(profileId)
-    override fun onCleared() {
-        super.onCleared()
-        job.complete()
+        popupWindow = PopupWindow(activity)
+        popupView = inflater.inflate(R.layout.popup, null)
+        popupWindow.contentView = popupView
+        popupWindow.isFocusable = true
     }
 }

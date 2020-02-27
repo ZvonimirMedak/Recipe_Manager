@@ -20,10 +20,15 @@ import com.example.recipemanager.databinding.CreateRecipeBinding
 import com.example.recipemanager.ingredients.IngredientOnClickListener
 import com.example.recipemanager.ingredients.IngredientsRecyclerAdapter
 import com.example.recipemanager.ingredients.IngredientsViewModel
+import com.example.recipemanager.utils.DatabaseIngredientsUtils
+import com.example.recipemanager.utils.DatabaseRecipeUtils
+import com.example.recipemanager.utils.DatabaseRecipeWithIngredientsUtils
 
 class CreateRecipeFragment : Fragment() {
     private lateinit var adapter: IngredientsRecyclerAdapter
 //    private lateinit var recipe: Recipe
+    private lateinit var databaseIngredientsUtils: DatabaseIngredientsUtils
+    private lateinit var databaseRecipeWithIngredientsUtils: DatabaseRecipeWithIngredientsUtils
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,15 +37,10 @@ class CreateRecipeFragment : Fragment() {
         val binding: CreateRecipeBinding =
             DataBindingUtil.inflate(inflater, R.layout.create_recipe, container, false)
         val application = requireNotNull(this.activity).application
-        val database = AppDatabase.getInstance(application)
-        val recipeDao = database.recipeDao
-        val ingredientDao = database.ingredientDao
+        databaseIngredientsUtils = DatabaseIngredientsUtils(application)
+        databaseRecipeWithIngredientsUtils = DatabaseRecipeWithIngredientsUtils(application)
         val profileId = arguments!!.getLong("profileId", 0)
-        val viewModel = CreateRecipeViewModel(recipeDao, ingredientDao, profileId)
-        val deletePopup = PopupWindow(activity)
-        val deletePopupView = inflater.inflate(R.layout.popup_delete, null)
-        deletePopup.isFocusable = true
-        deletePopup.contentView = deletePopupView
+        val viewModel = CreateRecipeViewModel()
         /*recipe = Recipe(
             name = "Pahuljaste palačinke s vodom",
             description = "Sve ručno miješati, brašno dodavati na kraju, ako je potrebno.",
@@ -49,22 +49,33 @@ class CreateRecipeFragment : Fragment() {
             photoUrl = "https://i.imgur.com/8DeRKmP.jpg"
         )*/
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
-            adapter.deleteRecipeIngredient(it)
-        }, ingredientDao, deletePopup, deletePopupView, binding.root, profileId)
-
+            databaseIngredientsUtils.deleteRecipeIngredient(it,adapter = adapter, rootLayout = binding.root)
+        })
         binding.createRecipeIngredientsRecycler.adapter = adapter
         binding.createRecipeIngredientsRecycler.layoutManager = LinearLayoutManager(activity)
+        setupOnClickListeners(binding, viewModel, profileId)
+        setupNavigationObserver(viewModel, profileId)
+
+        return binding.root
+    }
+
+    private fun setupOnClickListeners(
+        binding: CreateRecipeBinding,
+        viewModel: CreateRecipeViewModel,
+        profileId: Long
+    ) {
         binding.insertRecipeButton.setOnClickListener {
             val recipe = Recipe(name = binding.recipeNameEdit.text.toString(), description = binding.descriptionEdit.text.toString(),
-            timeToMake = binding.timeToMakeEdit.text.toString(), typeOfMeal = binding.typeOfMealEdit.text.toString(),
-            gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked,
-            caffeine = binding.caffeineCheck.isChecked, profileId = profileId
-            ,photoUrl = binding.photoUrlEdit.text.toString())
-            viewModel.insertRecipe(recipe)
+                timeToMake = binding.timeToMakeEdit.text.toString(), typeOfMeal = binding.typeOfMealEdit.text.toString(),
+                gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked,
+                caffeine = binding.caffeineCheck.isChecked, profileId = profileId
+                ,photoUrl = binding.photoUrlEdit.text.toString())
+            databaseRecipeWithIngredientsUtils.insertRecipe(recipe, viewModel)
         }
         binding.ingredientButton.setOnClickListener {
             if (binding.ingredientEditRecipe.text.toString() != "") {
-                adapter.createRecipeIngredient(
+                databaseIngredientsUtils.createRecipeIngredient(
+                    adapter,
                     Ingredient(
                         ingredientText = binding.ingredientEditRecipe.text.toString(),
                         recipeId = 0
@@ -74,6 +85,9 @@ class CreateRecipeFragment : Fragment() {
             }
 
         }
+    }
+
+    private fun setupNavigationObserver(viewModel: CreateRecipeViewModel, profileId : Long) {
         viewModel.navigateToAllRecipes.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 this.findNavController().navigate(
@@ -84,7 +98,5 @@ class CreateRecipeFragment : Fragment() {
                 viewModel.navigationToAllRecipesDone()
             }
         })
-
-        return binding.root
     }
 }
