@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.recipemanager.appDatabase.*
 import com.example.recipemanager.databinding.IngredientListItemBinding
 import com.example.recipemanager.databinding.ProfileListItemBinding
-import com.example.recipemanager.profiles.DataItem
 import com.example.recipemanager.profiles.ProfileDiffCallback
 import com.example.recipemanager.profiles.ProfileOnClickListener
 import com.example.recipemanager.profiles.ProfileRecyclerAdapter

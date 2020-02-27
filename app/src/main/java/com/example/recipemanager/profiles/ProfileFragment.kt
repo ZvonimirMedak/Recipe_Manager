@@ -19,13 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.databinding.ProfilePageBinding
+import com.example.recipemanager.utils.DatabaseProfileUtils
+import com.example.recipemanager.utils.DatabaseUserUtils
 
 class ProfileFragment : Fragment() {
-
-    override fun onResume() {
-        super.onResume()
-
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,41 +39,17 @@ class ProfileFragment : Fragment() {
             R.layout.profile_page, container, false
         )
         val application = requireNotNull(this.activity).application
-        val database = AppDatabase.getInstance(application)
-        val profileViewModel = ProfileViewModel(database.profileDao)
-        binding.viewModel = profileViewModel
-        binding.setLifecycleOwner(this)
+        val databaseProfileUtils= DatabaseProfileUtils(application)
+        val viewModel = ProfileViewModel()
+        binding.viewModel = viewModel
         val adapter = ProfileRecyclerAdapter(ProfileOnClickListener {
-            profileViewModel.onProfileClicked(it)
-        }, database.profileDao)
-
+            viewModel.navigateToDetailProfile(it)
+        })
         val username = arguments!!.getString("username", "")
-        adapter.submitNewList(username)
-
+        databaseProfileUtils.submitNewList(username, adapter)
         binding.profileRecycler.layoutManager = LinearLayoutManager(context)
         binding.profileRecycler.adapter = adapter
-
-
-
-        profileViewModel.navigateToDetailedProfile.observe(this, Observer { profile ->
-            profile?.let {
-                this.findNavController().navigate(
-                    ProfileFragmentDirections.actionProfileFragmentToDetailProfileFragment(it)
-                )
-                profileViewModel.navigateToDetailProfileDone()
-            }
-        }
-        )
-
-        profileViewModel.navigateToNewProfileFragment.observe(this, Observer {
-            if (it == true) {
-                this.findNavController().navigate(
-                    ProfileFragmentDirections.actionProfileFragmentToNewProfileFragment(username)
-                )
-                profileViewModel.navigateToNewProfileFragmentDone()
-            }
-        })
-
+        setupNavigationObservers(viewModel, username)
         return binding.root
     }
 
@@ -86,4 +59,24 @@ class ProfileFragment : Fragment() {
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
 
+    private fun setupNavigationObservers(viewModel: ProfileViewModel, username : String ){
+        viewModel.navigateToDetailedProfile.observe(this, Observer {
+            if(it!= null) {
+                this.findNavController().navigate(
+                    ProfileFragmentDirections.actionProfileFragmentToDetailProfileFragment(it)
+                )
+                viewModel.navigationToDetailProfileDone()
+            }
+        }
+        )
+
+        viewModel.navigateToNewProfileFragment.observe(this, Observer {
+            if (it == true) {
+                this.findNavController().navigate(
+                    ProfileFragmentDirections.actionProfileFragmentToNewProfileFragment(username)
+                )
+                viewModel.navigationToNewProfileFragmentDone()
+            }
+        })
+    }
 }

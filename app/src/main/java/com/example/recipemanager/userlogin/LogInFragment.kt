@@ -14,6 +14,7 @@ import com.example.recipemanager.utils.DatabaseUserUtils
 import kotlinx.android.synthetic.main.log_in.*
 
 class LogInFragment : Fragment() {
+    private lateinit var databaseUserUtils: DatabaseUserUtils
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -24,18 +25,13 @@ class LogInFragment : Fragment() {
             R.layout.log_in, container, false
         )
         val application = requireNotNull(this.activity).application
-        val databaseUserUtils = DatabaseUserUtils(application)
+        databaseUserUtils = DatabaseUserUtils(application)
         val viewModel = LogInViewModel()
         binding.viewModel = viewModel
-        binding.verifyButton.setOnClickListener {
-            databaseUserUtils.onVerificationClicked(
-                binding.usernameEdit.text.toString(),
-                binding.passwordEdit.text.toString(),
-                viewModel
-            )
-        }
+
 
         setupNavigationObservers(viewModel)
+        setupOnClickListeners(binding, viewModel)
 
         return binding.root
     }
@@ -59,6 +55,16 @@ class LogInFragment : Fragment() {
             }
 
         })
+    }
+
+    private fun setupOnClickListeners(binding: LogInBinding, viewModel: LogInViewModel) {
+        binding.verifyButton.setOnClickListener {
+            databaseUserUtils.onVerificationClicked(
+                binding.usernameEdit.text.toString(),
+                binding.passwordEdit.text.toString(),
+                viewModel
+            )
+        }
     }
 
 }

@@ -8,7 +8,7 @@ import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.appDatabase.ProfileDao
 import kotlinx.coroutines.*
 
-class ProfileViewModel(val databaseDao: ProfileDao) : ViewModel() {
+class ProfileViewModel : ViewModel() {
     private val _navigateToNewProfileFragment = MutableLiveData<Boolean?>()
     val navigateToNewProfileFragment: LiveData<Boolean?>
         get() = _navigateToNewProfileFragment
@@ -26,76 +26,35 @@ class ProfileViewModel(val databaseDao: ProfileDao) : ViewModel() {
     val navigateToDetailedProfile: LiveData<Long?>
         get() = _navigateToDetailedProfile
 
-    private val profileJob = Job()
-    private val uiScope = CoroutineScope(Dispatchers.Main + profileJob)
-
-    lateinit var username: String
 
 
-    fun onProfileClicked(profileId: Long) {
+
+    fun navigateToDetailProfile(profileId: Long) {
         _navigateToDetailedProfile.value = profileId
     }
 
-    fun navigateToDetailProfileDone() {
+    fun navigationToDetailProfileDone() {
         _navigateToDetailedProfile.value = null
     }
 
 
-    override fun onCleared() {
-        super.onCleared()
-        profileJob.cancel()
-    }
-
-    fun navigateToNewProfileFragmentDone() {
+    fun navigationToNewProfileFragmentDone() {
         _navigateToNewProfileFragment.value = null
     }
 
-    fun navigateToNewProfileFragmentWanted() {
+    fun navigateToNewProfileFragment() {
         _navigateToNewProfileFragment.value = true
     }
 
-    fun navigateToProfileFragmentWanted() {
+    fun navigateToProfileFragment() {
         _navigateToProfileFragment.value = true
     }
 
-    fun navigateToProfileFragmentDone() {
+    fun navigationToProfileFragmentDone() {
         _navigateToProfileFragment.value = null
     }
 
-    fun inputProfile(name: String, list: ArrayList<Boolean>, username: String) {
 
-        uiScope.launch {
-            var done = false
-            withContext(Dispatchers.IO) {
-                if (checkIfProfileAvailable(name) == null) {
-                    databaseDao.insertProfile(
-                        Profile(
-                            0,
-                            name,
-                            list[0],
-                            list[1],
-                            list[2],
-                            list[3],
-                            username
-                        )
-                    )
-                    done = true
-                }
-
-            }
-
-            if (done)
-                navigateToProfileFragmentWanted()
-        }
 
     }
 
-    private fun checkIfProfileAvailable(name: String): Profile? {
-        var profile: Profile? = null
-        if (name != "") {
-            profile = databaseDao.checkProfile(name, username)
-        }
-        return profile
-
-    }
-}

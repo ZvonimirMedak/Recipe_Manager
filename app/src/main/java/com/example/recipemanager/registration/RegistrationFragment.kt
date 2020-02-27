@@ -14,7 +14,7 @@ import com.example.recipemanager.databinding.RegistrationFormBinding
 import com.example.recipemanager.utils.DatabaseUserUtils
 
 class RegistrationFragment : Fragment() {
-
+    private lateinit var databaseUserUtils: DatabaseUserUtils
 
 
     override fun onCreateView(
@@ -24,18 +24,12 @@ class RegistrationFragment : Fragment() {
     ): View? {
         val binding : RegistrationFormBinding = DataBindingUtil.inflate(inflater, R.layout.registration_form, container, false)
         val application = requireNotNull(this.activity).application
-        val databaseUserUtils = DatabaseUserUtils(application)
+        databaseUserUtils = DatabaseUserUtils(application)
         val viewModel = RegistrationViewModel()
         binding.viewModel = viewModel
-        binding.doneButton.setOnClickListener {
-            databaseUserUtils.insertNewUser(
-                binding.regUsernameEdit.text.toString(),
-                binding.regPasswordEdit.text.toString(), binding.regConfirmpassEdit.text.toString(),
-                viewModel
-            )
-        }
-        setupNavigationObserver(viewModel)
 
+        setupNavigationObserver(viewModel)
+        setupOnClickListeners(binding, viewModel)
         return binding.root
     }
 
@@ -47,5 +41,15 @@ class RegistrationFragment : Fragment() {
                 viewModel.navigationToLoginDone()
             }
         })
+    }
+
+    private fun setupOnClickListeners(binding: RegistrationFormBinding, viewModel: RegistrationViewModel){
+        binding.doneButton.setOnClickListener {
+            databaseUserUtils.insertNewUser(
+                binding.regUsernameEdit.text.toString(),
+                binding.regPasswordEdit.text.toString(), binding.regConfirmpassEdit.text.toString(),
+                viewModel
+            )
+        }
     }
 }

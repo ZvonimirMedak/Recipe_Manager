@@ -12,9 +12,11 @@ import androidx.navigation.fragment.findNavController
 import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.databinding.AddNewProfileBinding
+import com.example.recipemanager.utils.DatabaseProfileUtils
 import kotlinx.android.synthetic.main.add_new_profile.*
 
 class NewProfileFragment : Fragment() {
+    private lateinit var databaseProfileUtils: DatabaseProfileUtils
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -23,27 +25,29 @@ class NewProfileFragment : Fragment() {
         val binding: AddNewProfileBinding =
             DataBindingUtil.inflate(inflater, R.layout.add_new_profile, container, false)
         val application = requireNotNull(this.activity).application
-        val database = AppDatabase.getInstance(application)
-        val databaseDao = database.profileDao
-        val profileViewModel = ProfileViewModel(databaseDao)
-        val username = arguments!!.getString("username", "")
-        profileViewModel.username = username
-        binding.viewModel = profileViewModel
-        profileViewModel.navigateToProfileFragment.observe(this, Observer {
-            if (it == true) {
-                activity!!.onBackPressed()
-                profileViewModel.navigateToProfileFragmentDone()
-            }
-        })
+        databaseProfileUtils = DatabaseProfileUtils(application)
+        val viewModel = ProfileViewModel()
+        val username = arguments!!.getString("username")
+        binding.viewModel = viewModel
+        setupNavigationObserver(viewModel)
+        setupOnClickListeners(binding, viewModel, username!!)
+        return binding.root
+    }
+
+    private fun setupOnClickListeners(binding : AddNewProfileBinding, viewModel: ProfileViewModel, username : String ){
         binding.createButton.setOnClickListener {
             val checkedBoxes = getAllBoxes()
-            profileViewModel.inputProfile(profile_name_edit.text.toString(), checkedBoxes, username)
+            databaseProfileUtils.inputProfile(profile_name_edit.text.toString(), checkedBoxes, username, viewModel)
         }
+    }
 
-
-
-
-        return binding.root
+    private fun setupNavigationObserver(viewModel: ProfileViewModel){
+        viewModel.navigateToProfileFragment.observe(this, Observer {
+            if (it == true) {
+                activity!!.onBackPressed()
+                viewModel.navigationToProfileFragmentDone()
+            }
+        })
     }
 
     private fun getAllBoxes(): ArrayList<Boolean> {

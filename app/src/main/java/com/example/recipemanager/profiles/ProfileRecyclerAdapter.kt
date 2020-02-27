@@ -19,35 +19,23 @@ import kotlinx.coroutines.withContext
 
 
 class ProfileRecyclerAdapter(
-    val onClickListener: ProfileOnClickListener,
-    val databaseDao: ProfileDao
-) : ListAdapter<DataItem, ProfileRecyclerAdapter.ViewHolder>(ProfileDiffCallback()) {
+    val onClickListener: ProfileOnClickListener
+) : ListAdapter<Profile, ProfileRecyclerAdapter.ViewHolder>(ProfileDiffCallback()) {
 
 
-    private fun getProfiles(username: String) = databaseDao.getAllProfiles(username)
-    private val adapterScope = CoroutineScope(Dispatchers.Default)
-    fun submitNewList(username: String) {
-        adapterScope.launch {
-            val list = getProfiles(username)
-            val items = list?.map { DataItem.ProfileItem(it) }
-            Log.d("msg", items.toString())
-            withContext(Dispatchers.Main) {
-                submitList(items)
-            }
-        }
-    }
+
 
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ProfileRecyclerAdapter.ViewHolder {
+    ):ViewHolder {
         return ViewHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: ProfileRecyclerAdapter.ViewHolder, position: Int) {
-        val profile = getItem(position) as DataItem.ProfileItem
-        holder.bind(profile.profile, onClickListener)
+        val profile = getItem(position)
+        holder.bind(profile, onClickListener)
 
     }
 
@@ -70,12 +58,12 @@ class ProfileRecyclerAdapter(
     }
 }
 
-class ProfileDiffCallback : DiffUtil.ItemCallback<DataItem>() {
-    override fun areItemsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
+class ProfileDiffCallback : DiffUtil.ItemCallback<Profile>() {
+    override fun areItemsTheSame(oldItem: Profile, newItem: Profile): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
+    override fun areContentsTheSame(oldItem: Profile, newItem: Profile): Boolean {
         return oldItem.profileId == newItem.profileId
     }
 
@@ -83,13 +71,4 @@ class ProfileDiffCallback : DiffUtil.ItemCallback<DataItem>() {
 
 class ProfileOnClickListener(val onClickListener: (profileId: Long) -> Unit) {
     fun onClick(profile: Profile) = onClickListener(profile.profileId)
-}
-
-
-sealed class DataItem {
-    data class ProfileItem(val profile: Profile) : DataItem() {
-        override val profileId = profile.profileId
-    }
-
-    abstract val profileId: Long
 }
