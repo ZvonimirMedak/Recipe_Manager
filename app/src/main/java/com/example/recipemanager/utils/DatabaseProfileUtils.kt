@@ -1,10 +1,12 @@
 package com.example.recipemanager.utils
 
 import android.app.Application
+import android.view.Gravity
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.profiles.ProfileRecyclerAdapter
 import com.example.recipemanager.profiles.ProfileViewModel
+import kotlinx.android.synthetic.main.error_popup.view.*
 import kotlinx.coroutines.*
 
 class DatabaseProfileUtils(application: Application) {
@@ -38,6 +40,11 @@ class DatabaseProfileUtils(application: Application) {
                 )
                 withContext(Dispatchers.Main){
                     viewModel.navigateToProfileFragment()
+                }
+            }else{
+                withContext(Dispatchers.Main){
+                    viewModel.popupView.error_text.text = "Profile already exists"
+                    viewModel.popupWindow.showAtLocation(viewModel.rootLayout, Gravity.CENTER, 0,0)
                 }
             }
 

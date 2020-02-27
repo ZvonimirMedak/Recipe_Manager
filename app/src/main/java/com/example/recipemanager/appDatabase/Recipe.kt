@@ -20,7 +20,7 @@ data class Recipe(
     @PrimaryKey(autoGenerate = true)
     var recipeId: Long = 0L,
     var name: String,
-    var photoUrl: String,
+    var photoUrl: String ="https://i.imgur.com/qFk6jsK.png",
     var description: String,
     var timeToMake: String,
     var typeOfMeal: String,

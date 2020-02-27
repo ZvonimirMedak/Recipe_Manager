@@ -27,7 +27,7 @@
     <string name="navigation">Navigation</string>
     <string name="all_recipes">All recipes</string>
     <string name="my_ingredients">My Ingredients</string>
-    <string name="recipe_name">Recipe name</string>
+    <string name="recipe_name">Recipe name*</string>
     <string name="type_of_meal">Type of meal</string>
     <string name="time_to_make">Time to make</string>
     <string name="contains">Contains:</string>
@@ -44,5 +44,6 @@
     <string name="no">No</string>
     <string name="photo_url">Photo Url</string>
     <string name="update">Update</string>
+    <string name="ok">OK</string>
 
 </resources>

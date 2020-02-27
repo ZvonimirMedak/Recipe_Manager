@@ -2,12 +2,14 @@ package com.example.recipemanager.utils
 
 import android.app.Application
 import android.util.Log
+import android.view.Gravity
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.appDatabase.Favourite
 import com.example.recipemanager.appDatabase.Ingredient
 import com.example.recipemanager.appDatabase.Recipe
 import com.example.recipemanager.createRecipe.CreateRecipeViewModel
 import com.example.recipemanager.detailRecipe.DetailRecipeViewModel
+import kotlinx.android.synthetic.main.error_popup.view.*
 import kotlinx.coroutines.*
 
 class DatabaseRecipeWithIngredientsUtils (application: Application){
@@ -20,14 +22,17 @@ class DatabaseRecipeWithIngredientsUtils (application: Application){
     private val coroutineScope = CoroutineScope(Dispatchers.IO + job )
 
     private fun checkExistence(recipeName: String): Boolean {
-        val recipes = recipeDao.getAllrecipes()
-        if (recipes != null) {
-            for (r in recipes) {
-                if (recipeName == r.name) {
-                    return true
+        if(recipeName == "") {
+            return true
+        }
+            val recipes = recipeDao.getAllrecipes()
+            if (recipes != null) {
+                for (r in recipes) {
+                    if (recipeName == r.name) {
+                        return true
+                    }
                 }
             }
-        }
         return false
     }
 
@@ -41,6 +46,12 @@ class DatabaseRecipeWithIngredientsUtils (application: Application){
                 createRecipeIngredientsWithDelete(foundRecipe!!, list!!)
                 withContext(Dispatchers.Main) {
                     viewModel.navigateToAllRecipes()
+                }
+            }
+            else{
+                withContext(Dispatchers.Main){
+                    viewModel.popupView.error_text.text = "Recipe with that name already exists or the name is empty"
+                    viewModel.popupWindow.showAtLocation(viewModel.rootLayout, Gravity.CENTER, 0,0)
                 }
             }
         }

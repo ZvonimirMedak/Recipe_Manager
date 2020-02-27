@@ -40,7 +40,7 @@ class ProfileFragment : Fragment() {
         )
         val application = requireNotNull(this.activity).application
         val databaseProfileUtils= DatabaseProfileUtils(application)
-        val viewModel = ProfileViewModel()
+        val viewModel = ProfileViewModel(activity!!, binding.root)
         binding.viewModel = viewModel
         val adapter = ProfileRecyclerAdapter(ProfileOnClickListener {
             viewModel.navigateToDetailProfile(it)

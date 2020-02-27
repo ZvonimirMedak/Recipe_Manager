@@ -1,10 +1,12 @@
 package com.example.recipemanager.utils
 
 import android.app.Application
+import android.view.Gravity
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.appDatabase.User
 import com.example.recipemanager.registration.RegistrationViewModel
 import com.example.recipemanager.userlogin.LogInViewModel
+import kotlinx.android.synthetic.main.error_popup.view.*
 import kotlinx.coroutines.*
 
 class DatabaseUserUtils(application: Application){
@@ -22,6 +24,21 @@ class DatabaseUserUtils(application: Application){
                     withContext(Dispatchers.Main){
                         viewModel.navigateToProfileFragment()
                     }
+                }else{
+                    withContext(Dispatchers.Main) {
+                        viewModel.popupView.error_text.text = "User with that username doesn't exist"
+                        viewModel.popupWindow.showAtLocation(
+                            viewModel.rootLayout,
+                            Gravity.CENTER,
+                            0,
+                            0
+                        )
+                    }
+                }
+            }else{
+                withContext(Dispatchers.Main) {
+                    viewModel.popupView.error_text.text = "Login fields mustn't be empty"
+                    viewModel.popupWindow.showAtLocation(viewModel.rootLayout, Gravity.CENTER, 0, 0)
                 }
             }
         }
@@ -33,7 +50,6 @@ class DatabaseUserUtils(application: Application){
     fun insertNewUser(name: String, password: String, confirmation: String, viewModel : RegistrationViewModel) {
         if (verifyPassword(password, confirmation) && name != "") {
             coroutineScope.launch {
-                withContext(Dispatchers.IO) {
                     if (checkUser(name) == null) {
                         userDao.insert(
                             User(
@@ -45,9 +61,16 @@ class DatabaseUserUtils(application: Application){
                             viewModel.navigateToLogin()
                         }
 
+                    }else{
+                        withContext(Dispatchers.Main){
+                            viewModel.popupView.error_text.text = "User with that username already exists"
+                            viewModel.popupWindow.showAtLocation(viewModel.rootLayout, Gravity.CENTER,0,0)
+                        }
                     }
                 }
-            }
+        }else{
+            viewModel.popupView.error_text.text = "Username empty or wrong password"
+            viewModel.popupWindow.showAtLocation(viewModel.rootLayout, Gravity.CENTER, 0,0)
         }
     }
 

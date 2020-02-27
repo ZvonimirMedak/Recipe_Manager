@@ -26,7 +26,7 @@ class NewProfileFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.add_new_profile, container, false)
         val application = requireNotNull(this.activity).application
         databaseProfileUtils = DatabaseProfileUtils(application)
-        val viewModel = ProfileViewModel()
+        val viewModel = ProfileViewModel(activity!!, binding.root)
         val username = arguments!!.getString("username")
         binding.viewModel = viewModel
         setupNavigationObserver(viewModel)

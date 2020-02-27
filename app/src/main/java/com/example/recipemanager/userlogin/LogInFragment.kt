@@ -26,7 +26,7 @@ class LogInFragment : Fragment() {
         )
         val application = requireNotNull(this.activity).application
         databaseUserUtils = DatabaseUserUtils(application)
-        val viewModel = LogInViewModel()
+        val viewModel = LogInViewModel(activity!!, binding.root)
         binding.viewModel = viewModel
 
 

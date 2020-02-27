@@ -25,7 +25,7 @@ class RegistrationFragment : Fragment() {
         val binding : RegistrationFormBinding = DataBindingUtil.inflate(inflater, R.layout.registration_form, container, false)
         val application = requireNotNull(this.activity).application
         databaseUserUtils = DatabaseUserUtils(application)
-        val viewModel = RegistrationViewModel()
+        val viewModel = RegistrationViewModel(activity!!, binding.root)
         binding.viewModel = viewModel
 
         setupNavigationObserver(viewModel)

@@ -40,7 +40,7 @@ class CreateRecipeFragment : Fragment() {
         databaseIngredientsUtils = DatabaseIngredientsUtils(application)
         databaseRecipeWithIngredientsUtils = DatabaseRecipeWithIngredientsUtils(application)
         val profileId = arguments!!.getLong("profileId", 0)
-        val viewModel = CreateRecipeViewModel()
+        val viewModel = CreateRecipeViewModel(activity!!, binding.root)
         /*recipe = Recipe(
             name = "Pahuljaste palačinke s vodom",
             description = "Sve ručno miješati, brašno dodavati na kraju, ako je potrebno.",
@@ -65,12 +65,21 @@ class CreateRecipeFragment : Fragment() {
         profileId: Long
     ) {
         binding.insertRecipeButton.setOnClickListener {
-            val recipe = Recipe(name = binding.recipeNameEdit.text.toString(), description = binding.descriptionEdit.text.toString(),
-                timeToMake = binding.timeToMakeEdit.text.toString(), typeOfMeal = binding.typeOfMealEdit.text.toString(),
-                gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked,
-                caffeine = binding.caffeineCheck.isChecked, profileId = profileId
-                ,photoUrl = binding.photoUrlEdit.text.toString())
-            databaseRecipeWithIngredientsUtils.insertRecipe(recipe, viewModel)
+            if(binding.photoUrlEdit.text.isEmpty()){
+                val recipe = Recipe(name = binding.recipeNameEdit.text.toString(), description = binding.descriptionEdit.text.toString(),
+                    timeToMake = binding.timeToMakeEdit.text.toString(), typeOfMeal = binding.typeOfMealEdit.text.toString(),
+                    gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked,
+                    caffeine = binding.caffeineCheck.isChecked, profileId = profileId)
+                databaseRecipeWithIngredientsUtils.insertRecipe(recipe, viewModel)
+            }else{
+                val recipe = Recipe(name = binding.recipeNameEdit.text.toString(), description = binding.descriptionEdit.text.toString(),
+                    timeToMake = binding.timeToMakeEdit.text.toString(), typeOfMeal = binding.typeOfMealEdit.text.toString(),
+                    gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked,
+                    caffeine = binding.caffeineCheck.isChecked, profileId = profileId
+                    ,photoUrl = binding.photoUrlEdit.text.toString())
+                databaseRecipeWithIngredientsUtils.insertRecipe(recipe, viewModel)
+            }
+
         }
         binding.ingredientButton.setOnClickListener {
             if (binding.ingredientEditRecipe.text.toString() != "") {
