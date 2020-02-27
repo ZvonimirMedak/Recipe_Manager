@@ -4,6 +4,7 @@ import android.app.Application
 import android.view.Gravity
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.appDatabase.Profile
+import com.example.recipemanager.detailProfile.DetailProfileViewModel
 import com.example.recipemanager.profiles.ProfileRecyclerAdapter
 import com.example.recipemanager.profiles.ProfileViewModel
 import kotlinx.android.synthetic.main.error_popup.view.*
@@ -26,6 +27,7 @@ class DatabaseProfileUtils(application: Application) {
     }
     fun inputProfile(name: String, list: ArrayList<Boolean>, username: String, viewModel : ProfileViewModel) {
         coroutineScope.launch {
+            if(!name.isEmpty()){
             if (checkIfProfileAvailable(name, username) == null) {
                 profileDao.insertProfile(
                     Profile(
@@ -48,6 +50,12 @@ class DatabaseProfileUtils(application: Application) {
                 }
             }
 
+        }else{
+                withContext(Dispatchers.Main){
+                    viewModel.popupView.error_text.text = "Profile name mustn't be empty"
+                    viewModel.popupWindow.showAtLocation(viewModel.rootLayout, Gravity.CENTER, 0,0)
+                }
+            }
         }
     }
     private fun getProfiles(username: String) = profileDao.getAllProfiles(username)
@@ -56,6 +64,21 @@ class DatabaseProfileUtils(application: Application) {
             val list = getProfiles(username)
             withContext(Dispatchers.Main) {
                 adapter.submitList(list)
+            }
+        }
+    }
+
+    fun deleteProfile(profileId : Long) {
+        coroutineScope.launch {
+            profileDao.deleteProfile(profileId)
+
+        }
+    }
+    fun getProfileFromDatabase(profileId: Long, viewModel: DetailProfileViewModel) {
+        coroutineScope.launch {
+            val profile = profileDao.getProfile(profileId)
+            withContext(Dispatchers.Main) {
+                viewModel.currentProfile.value = profile
             }
         }
     }

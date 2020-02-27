@@ -63,7 +63,7 @@ class ProfileFragment : Fragment() {
         viewModel.navigateToDetailedProfile.observe(this, Observer {
             if(it!= null) {
                 this.findNavController().navigate(
-                    ProfileFragmentDirections.actionProfileFragmentToDetailProfileFragment(it)
+                    ProfileFragmentDirections.actionProfileFragmentToDetailProfileFragment(it, username)
                 )
                 viewModel.navigationToDetailProfileDone()
             }

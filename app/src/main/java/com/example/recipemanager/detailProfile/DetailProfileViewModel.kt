@@ -10,12 +10,9 @@ import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.appDatabase.ProfileDao
 import kotlinx.coroutines.*
 
-class DetailProfileViewModel(private val profileId: Long, private val databaseDao: ProfileDao) :
-    ViewModel() {
-    private val detailProfileJob = Job()
-    private val uiScope = CoroutineScope(Dispatchers.Main + detailProfileJob)
+class DetailProfileViewModel : ViewModel() {
+
     val currentProfile = MutableLiveData<Profile?>()
-    var profile: Profile? = null
 
     private val _navigateToProfileFragment = MutableLiveData<Boolean?>()
     val navigateToProfileFragment: LiveData<Boolean?>
@@ -26,16 +23,7 @@ class DetailProfileViewModel(private val profileId: Long, private val databaseDa
         get() = _navigateToRecipes
 
 
-    init {
-        uiScope.launch {
-            currentProfile.value = getProfileFromDatabase()
-            Log.d("msg", currentProfile.value.toString())
-        }
-
-    }
-
-
-    fun navigateToRecipesWanted() {
+    fun navigateToRecipes() {
         _navigateToRecipes.value = true
     }
 
@@ -43,35 +31,12 @@ class DetailProfileViewModel(private val profileId: Long, private val databaseDa
         _navigateToRecipes.value = null
     }
 
-    private fun navigateToProfileFragmentWanted() {
+    fun navigateToProfileFragment() {
         _navigateToProfileFragment.value = true
     }
 
-    fun navigateToProfileFragmentDone() {
+    fun navigationToProfileFragmentDone() {
         _navigateToProfileFragment.value = null
     }
-
-    fun deleteProfile() {
-        uiScope.launch {
-            withContext(Dispatchers.IO) {
-                databaseDao.deleteProfile(profileId)
-            }
-            navigateToProfileFragmentWanted()
-        }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        detailProfileJob.cancel()
-    }
-
-    private suspend fun getProfileFromDatabase(): Profile? {
-        return withContext(Dispatchers.IO) {
-            val profile = databaseDao.getProfile(profileId)
-            profile
-
-        }
-    }
-
 
 }

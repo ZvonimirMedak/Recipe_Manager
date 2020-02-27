@@ -71,6 +71,9 @@
             android:id="@+id/action_detailProfileFragment_to_recommendedRecipe2"
             app:destination="@id/recommendedRecipe2"
             app:popUpTo="@+id/profileFragment" />
+        <argument
+            android:name="username"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/allRecipesFragment2"
