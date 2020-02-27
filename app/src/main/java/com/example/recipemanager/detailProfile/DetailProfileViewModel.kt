@@ -10,19 +10,20 @@ import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.appDatabase.ProfileDao
 import kotlinx.coroutines.*
 
-class DetailProfileViewModel(private val profileId: Long, private val databaseDao : ProfileDao) : ViewModel(){
+class DetailProfileViewModel(private val profileId: Long, private val databaseDao: ProfileDao) :
+    ViewModel() {
     private val detailProfileJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + detailProfileJob)
     val currentProfile = MutableLiveData<Profile?>()
-    var profile : Profile? = null
+    var profile: Profile? = null
 
     private val _navigateToProfileFragment = MutableLiveData<Boolean?>()
-    val navigateToProfileFragment : LiveData<Boolean?>
+    val navigateToProfileFragment: LiveData<Boolean?>
         get() = _navigateToProfileFragment
 
     private val _navigateToRecipes = MutableLiveData<Boolean?>()
-    val navigateToRecipes : LiveData<Boolean?>
-    get() = _navigateToRecipes
+    val navigateToRecipes: LiveData<Boolean?>
+        get() = _navigateToRecipes
 
 
     init {
@@ -31,29 +32,28 @@ class DetailProfileViewModel(private val profileId: Long, private val databaseDa
             Log.d("msg", currentProfile.value.toString())
         }
 
-}
+    }
 
 
-
-    fun navigateToRecipesWanted(){
+    fun navigateToRecipesWanted() {
         _navigateToRecipes.value = true
     }
 
-    fun navigateToRecipesDone(){
+    fun navigateToRecipesDone() {
         _navigateToRecipes.value = null
     }
 
-    private fun navigateToProfileFragmentWanted(){
+    private fun navigateToProfileFragmentWanted() {
         _navigateToProfileFragment.value = true
     }
 
-    fun navigateToProfileFragmentDone(){
+    fun navigateToProfileFragmentDone() {
         _navigateToProfileFragment.value = null
     }
 
-    fun deleteProfile(){
+    fun deleteProfile() {
         uiScope.launch {
-            withContext(Dispatchers.IO){
+            withContext(Dispatchers.IO) {
                 databaseDao.deleteProfile(profileId)
             }
             navigateToProfileFragmentWanted()
@@ -74,5 +74,4 @@ class DetailProfileViewModel(private val profileId: Long, private val databaseDa
     }
 
 
-
-    }
+}

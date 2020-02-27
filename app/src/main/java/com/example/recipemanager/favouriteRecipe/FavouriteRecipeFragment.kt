@@ -16,23 +16,24 @@ import com.example.recipemanager.recipe.AllRecipeRecyclerAdapter
 import com.example.recipemanager.recipe.RecipeOnClickListener
 import com.example.recipemanager.recipe.RecommendedRecipeViewModel
 
-class FavouriteRecipeFragment : Fragment(){
+class FavouriteRecipeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding : FavouriteRecipesBinding = DataBindingUtil.inflate(inflater, R.layout.favourite_recipes, container, false)
+        val binding: FavouriteRecipesBinding =
+            DataBindingUtil.inflate(inflater, R.layout.favourite_recipes, container, false)
         val viewModel = FavouriteRecipeViewModel()
         val profileId = arguments!!.getLong("profileId", 0)
         val application = requireNotNull(this.activity).application
         val database = AppDatabase.getInstance(application)
-        val recipeDao =  database.recipeDao
+        val recipeDao = database.recipeDao
         val profileDao = database.profileDao
         val favouriteDao = database.favouriteDao
         val adapter = AllRecipeRecyclerAdapter(RecipeOnClickListener {
             viewModel.navigateToDetailedRecipe(it)
-        }, recipeDao, profileDao, profileId , favouriteDao)
+        }, recipeDao, profileDao, profileId, favouriteDao)
         binding.recipeRecycler.adapter = adapter
         binding.recipeRecycler.layoutManager = LinearLayoutManager(context)
         adapter.submitNewFavouriteList()
@@ -47,33 +48,42 @@ class FavouriteRecipeFragment : Fragment(){
             viewModel.navigateToRecommendedRecipes()
         }
         viewModel.navigateToAllRecipes.observe(viewLifecycleOwner, Observer {
-            if(it == true){
+            if (it == true) {
                 this.findNavController().navigate(
-                    FavouriteRecipeFragmentDirections.actionFavouriteRecipeFragmentToAllRecipesFragment2(profileId)
+                    FavouriteRecipeFragmentDirections.actionFavouriteRecipeFragmentToAllRecipesFragment2(
+                        profileId
+                    )
                 )
                 viewModel.navigationToAllRecipesDone()
             }
         })
         viewModel.navigateToDetailRecipe.observe(viewLifecycleOwner, Observer {
-            if(it != null){
+            if (it != null) {
                 this.findNavController().navigate(
-                    FavouriteRecipeFragmentDirections.actionFavouriteRecipeFragmentToDetailRecipeFragment(it, profileId)
+                    FavouriteRecipeFragmentDirections.actionFavouriteRecipeFragmentToDetailRecipeFragment(
+                        it,
+                        profileId
+                    )
                 )
                 viewModel.navigationToDetailedRecipeDone()
             }
         })
         viewModel.navigateToMyIngredients.observe(viewLifecycleOwner, Observer {
-            if(it== true){
+            if (it == true) {
                 this.findNavController().navigate(
-                    FavouriteRecipeFragmentDirections.actionFavouriteRecipeFragmentToIngredientsFragment(profileId)
+                    FavouriteRecipeFragmentDirections.actionFavouriteRecipeFragmentToIngredientsFragment(
+                        profileId
+                    )
                 )
                 viewModel.navigationToMyIngredientsDone()
             }
         })
         viewModel.navigateToRecommendedRecipes.observe(viewLifecycleOwner, Observer {
-            if(it == true){
+            if (it == true) {
                 this.findNavController().navigate(
-                    FavouriteRecipeFragmentDirections.actionFavouriteRecipeFragmentToRecommendedRecipe2(profileId)
+                    FavouriteRecipeFragmentDirections.actionFavouriteRecipeFragmentToRecommendedRecipe2(
+                        profileId
+                    )
                 )
                 viewModel.navigationToRecommendedRecipesDone()
             }

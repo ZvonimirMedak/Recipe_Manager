@@ -1,188 +1,209 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
+
         <variable
             name="viewModel"
             type="com.example.recipemanager.createRecipe.CreateRecipeViewModel" />
     </data>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginTop="30dp"
-            app:layout_constraintTop_toTopOf="parent"
-            android:hint="@string/recipe_name"
-            android:id="@+id/recipe_name_edit"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/recipe_name_edit"
-            android:hint="@string/type_of_meal"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginTop="30dp"
-            android:id="@+id/type_of_meal_edit"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/type_of_meal_edit"
-            android:hint="@string/time_to_make"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginTop="30dp"
-            android:id="@+id/time_to_make_edit"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/time_to_make_edit"
-            android:hint="@string/photo_url"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginTop="30dp"
-            android:id="@+id/photo_url_edit"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/photo_url_edit"
-            android:layout_marginTop="30dp"
-            android:layout_marginStart="50dp"
-            android:textSize="24sp"
-            android:id="@+id/contains_text"
-            android:text="@string/contains"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/contains_text"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="50dp"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textSize="15sp"
-            android:id="@+id/gluten_text"
-            android:text="@string/gluten"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/gluten_text"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="50dp"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textSize="15sp"
-            android:id="@+id/lactose_text"
-            android:text="@string/lactose"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/lactose_text"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="50dp"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textSize="15sp"
-            android:id="@+id/caffeine_text"
-            android:text="@string/caffeine"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/caffeine_text"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="50dp"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textSize="15sp"
-            android:id="@+id/fructose_text"
-            android:text="@string/fructose"/>
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/contains_text"
-            app:layout_constraintLeft_toRightOf="@id/gluten_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="150dp"
-            android:layout_marginTop="12dp"
-            android:id="@+id/gluten_check"/>
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            app:layout_constraintTop_toBottomOf="@id/gluten_check"
-            app:layout_constraintLeft_toRightOf="@id/lactose_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="150dp"
-            android:id="@+id/lactose_check"/>
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/caffeine_check"
-            android:layout_marginTop = "3dp"
-            app:layout_constraintTop_toBottomOf="@id/lactose_check"
-            app:layout_constraintLeft_toRightOf="@id/caffeine_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="150dp"/>
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/caffeine_check"
-            app:layout_constraintLeft_toRightOf="@id/fructose_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/fructose_check"
-            android:layout_marginEnd="150dp"
-            android:layout_marginTop="3dp"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ingredients"
-            android:layout_marginStart="20dp"
-            android:textSize="24sp"
-            android:id="@+id/ingredients_text"
-            android:layout_marginTop="15dp"
-            app:layout_constraintTop_toBottomOf="@id/fructose_check" />
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="15dp"
-            android:id="@+id/create_recipe_ingredients_recycler"
-            app:layout_constraintTop_toBottomOf="@id/ingredients_text"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/create_recipe_ingredients_recycler"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="100dp"
-            android:hint="@string/ingredient_and_amount"
-            android:id="@+id/ingredient_edit_recipe"
-            android:layout_marginStart="15dp"/>
-        <Button
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toRightOf="@id/ingredient_edit_recipe"
-            app:layout_constraintTop_toBottomOf="@id/create_recipe_ingredients_recycler"
-            android:layout_marginTop="15dp"
-            android:id="@+id/ingredient_button"
-            android:text="@string/insert"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/ingredient_edit_recipe"
-            android:layout_margin="15dp"
-            android:id="@+id/description_edit"
-            android:hint="@string/description"/>
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/description_edit"
-            android:layout_marginTop="20dp"
-            android:text="@string/insert_recipe"
-            android:id="@+id/insert_recipe_button"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/recipe_name_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="50dp"
+                android:hint="@string/recipe_name"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/type_of_meal_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="50dp"
+                android:hint="@string/type_of_meal"
+                app:layout_constraintTop_toBottomOf="@id/recipe_name_edit" />
+
+            <EditText
+                android:id="@+id/time_to_make_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="50dp"
+                android:hint="@string/time_to_make"
+                app:layout_constraintTop_toBottomOf="@id/type_of_meal_edit" />
+
+            <EditText
+                android:id="@+id/photo_url_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="50dp"
+                android:hint="@string/photo_url"
+                app:layout_constraintTop_toBottomOf="@id/time_to_make_edit" />
+
+            <TextView
+                android:id="@+id/contains_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/contains"
+                android:textSize="24sp"
+                app:layout_constraintTop_toBottomOf="@id/photo_url_edit" />
+
+            <TextView
+                android:id="@+id/gluten_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/gluten"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/contains_text" />
+
+            <TextView
+                android:id="@+id/lactose_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/lactose"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/gluten_text" />
+
+            <TextView
+                android:id="@+id/caffeine_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/caffeine"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lactose_text" />
+
+            <TextView
+                android:id="@+id/fructose_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/fructose"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/caffeine_text" />
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/gluten_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="150dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/gluten_text"
+                app:layout_constraintTop_toBottomOf="@id/contains_text" />
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/lactose_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="150dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/lactose_text"
+                app:layout_constraintTop_toBottomOf="@id/gluten_check" />
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/caffeine_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="150dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/caffeine_text"
+                app:layout_constraintTop_toBottomOf="@id/lactose_check" />
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/fructose_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="150dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/fructose_text"
+                app:layout_constraintTop_toBottomOf="@id/caffeine_check" />
+
+            <TextView
+                android:id="@+id/ingredients_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/ingredients"
+                android:textSize="24sp"
+                app:layout_constraintTop_toBottomOf="@id/fructose_check" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/create_recipe_ingredients_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintTop_toBottomOf="@id/ingredients_text" />
+
+            <EditText
+                android:id="@+id/ingredient_edit_recipe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="100dp"
+                android:hint="@string/ingredient_and_amount"
+                app:layout_constraintTop_toBottomOf="@id/create_recipe_ingredients_recycler" />
+
+            <Button
+                android:id="@+id/ingredient_button"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/insert"
+                app:layout_constraintLeft_toRightOf="@id/ingredient_edit_recipe"
+                app:layout_constraintTop_toBottomOf="@id/create_recipe_ingredients_recycler" />
+
+            <EditText
+                android:id="@+id/description_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:hint="@string/description"
+                app:layout_constraintTop_toBottomOf="@id/ingredient_edit_recipe" />
+
+            <Button
+                android:id="@+id/insert_recipe_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/insert_recipe"
+                app:layout_constraintTop_toBottomOf="@id/description_edit" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </layout>

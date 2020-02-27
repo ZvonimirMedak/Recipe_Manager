@@ -19,13 +19,20 @@ import com.example.recipemanager.profiles.ProfileRecyclerAdapter
 import kotlinx.android.synthetic.main.popup_delete.view.*
 import kotlinx.coroutines.*
 
-class IngredientsRecyclerAdapter(val onClickListener: IngredientOnClickListener,private val ingredientDao: IngredientDao,
-                                 private val deletePopup : PopupWindow, private val deletePopupView : View, private val rootLayout : View, val profileId : Long) : ListAdapter<Ingredient, IngredientsRecyclerAdapter.ViewHolder>(IngredientsDiffCallback()){
+class IngredientsRecyclerAdapter(
+    val onClickListener: IngredientOnClickListener,
+    private val ingredientDao: IngredientDao,
+    private val deletePopup: PopupWindow,
+    private val deletePopupView: View,
+    private val rootLayout: View,
+    val profileId: Long
+) : ListAdapter<Ingredient, IngredientsRecyclerAdapter.ViewHolder>(IngredientsDiffCallback()) {
 
     private val job = Job()
     private val coroutineScope = CoroutineScope(job + Dispatchers.Main)
 
-    private fun getProfileIngredients(profileId : Long) = ingredientDao.getAllProfileIngredients(profileId)
+    private fun getProfileIngredients(profileId: Long) =
+        ingredientDao.getAllProfileIngredients(profileId)
 
     private val adapterScope = CoroutineScope(Dispatchers.Default)
     fun submitNewList(profileId: Long) {
@@ -37,36 +44,44 @@ class IngredientsRecyclerAdapter(val onClickListener: IngredientOnClickListener,
             }
         }
     }
-    private fun getRecipeIngredients(recipeId : Long) = ingredientDao.getAllRecipeIngredients(recipeId)
 
-    fun submitRecipeList(recipeId : Long){
+    private fun getRecipeIngredients(recipeId: Long) =
+        ingredientDao.getAllRecipeIngredients(recipeId)
+
+    fun submitRecipeList(recipeId: Long) {
         adapterScope.launch {
             val list = getRecipeIngredients(recipeId)
             Log.d("msg", list.toString())
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 submitList(list)
             }
         }
     }
 
-    fun insertNewIngredient(ingredient: Ingredient, profileId: Long){
+    fun insertNewIngredient(ingredient: Ingredient, profileId: Long) {
         adapterScope.launch {
             ingredientDao.insertIngredient(ingredient)
             submitNewList(profileId)
         }
     }
-    fun createRecipeIngredient(ingredient: Ingredient){
+
+    fun createRecipeIngredient(ingredient: Ingredient, recipeId: Long = 0) {
         adapterScope.launch {
-            ingredientDao.insertIngredient(Ingredient(ingredientText = ingredient.ingredientText, recipeId = 0))
-            submitRecipeList(0)
+            ingredientDao.insertIngredient(
+                Ingredient(
+                    ingredientText = ingredient.ingredientText,
+                    recipeId = recipeId
+                )
+            )
+            submitRecipeList(recipeId)
         }
     }
 
-    fun deleteIngredient(ingredientId : Long){
-        deletePopup.showAtLocation(rootLayout, Gravity.CENTER, 0,0)
+    fun deleteIngredient(ingredientId: Long) {
+        deletePopup.showAtLocation(rootLayout, Gravity.CENTER, 0, 0)
         deletePopupView.yes_button.setOnClickListener {
             coroutineScope.launch {
-                withContext(Dispatchers.IO){
+                withContext(Dispatchers.IO) {
                     ingredientDao.deleteIngredient(ingredientId)
                     submitNewList(profileId)
                 }
@@ -80,11 +95,12 @@ class IngredientsRecyclerAdapter(val onClickListener: IngredientOnClickListener,
         }
 
     }
-    fun deleteRecipeIngredient(ingredientId : Long, recipeId : Long = 0){
-        deletePopup.showAtLocation(rootLayout, Gravity.CENTER, 0,0)
+
+    fun deleteRecipeIngredient(ingredientId: Long, recipeId: Long = 0) {
+        deletePopup.showAtLocation(rootLayout, Gravity.CENTER, 0, 0)
         deletePopupView.yes_button.setOnClickListener {
             coroutineScope.launch {
-                withContext(Dispatchers.IO){
+                withContext(Dispatchers.IO) {
                     ingredientDao.deleteIngredient(ingredientId)
                     submitRecipeList(recipeId)
                 }
@@ -98,6 +114,7 @@ class IngredientsRecyclerAdapter(val onClickListener: IngredientOnClickListener,
         }
 
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
     }
@@ -107,14 +124,16 @@ class IngredientsRecyclerAdapter(val onClickListener: IngredientOnClickListener,
         holder.bind(ingredient, onClickListener)
     }
 
-    class ViewHolder private constructor(val binding : IngredientListItemBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(item: Ingredient, onClickListener: IngredientOnClickListener){
+    class ViewHolder private constructor(val binding: IngredientListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Ingredient, onClickListener: IngredientOnClickListener) {
             binding.ingredient = item
             binding.onClickListener = onClickListener
             binding.executePendingBindings()
         }
-        companion object{
-            fun from(parent: ViewGroup): ViewHolder{
+
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = IngredientListItemBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
@@ -124,7 +143,7 @@ class IngredientsRecyclerAdapter(val onClickListener: IngredientOnClickListener,
     }
 }
 
-class IngredientsDiffCallback : DiffUtil.ItemCallback<Ingredient>(){
+class IngredientsDiffCallback : DiffUtil.ItemCallback<Ingredient>() {
     override fun areItemsTheSame(oldItem: Ingredient, newItem: Ingredient): Boolean {
         return oldItem == newItem
     }
@@ -133,6 +152,7 @@ class IngredientsDiffCallback : DiffUtil.ItemCallback<Ingredient>(){
         return oldItem.ingredientId == newItem.ingredientId
     }
 }
-class IngredientOnClickListener(val onClickListener :(ingredientId : Long) -> Unit){
+
+class IngredientOnClickListener(val onClickListener: (ingredientId: Long) -> Unit) {
     fun onClick(ingredient: Ingredient) = onClickListener(ingredient.ingredientId)
 }

@@ -13,18 +13,19 @@ import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.databinding.AllRecipesBinding
 
-class AllRecipesFragment : Fragment(){
+class AllRecipesFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding : AllRecipesBinding = DataBindingUtil.inflate(inflater, R.layout.all_recipes, container, false)
+        val binding: AllRecipesBinding =
+            DataBindingUtil.inflate(inflater, R.layout.all_recipes, container, false)
         val application = requireNotNull(this.activity).application
         val database = AppDatabase.getInstance(application)
         val profileId = arguments!!.getLong("profileId", 0)
-        val recipeDao =  database.recipeDao
+        val recipeDao = database.recipeDao
         val recipeViewModel = AllRecipesViewModel()
         val profileDao = database.profileDao
         val favouriteDao = database.favouriteDao
@@ -32,36 +33,44 @@ class AllRecipesFragment : Fragment(){
             recipeViewModel.navigateToDetailedRecipe(it)
         }, recipeDao, profileDao, profileId, favouriteDao)
         binding.viewModel = recipeViewModel
-        binding.recommendedRecipesButton.setOnClickListener{
+        binding.recommendedRecipesButton.setOnClickListener {
             recipeViewModel.navigateToRecommendedRecipes()
         }
 
-        binding.myIngredientsButton.setOnClickListener{
+        binding.myIngredientsButton.setOnClickListener {
             recipeViewModel.navigateToMyIngredients()
         }
         binding.favouriteRecipesButton.setOnClickListener {
             recipeViewModel.navigateToFavouriteRecipes()
         }
         recipeViewModel.navigateToFavouriteRecipes.observe(viewLifecycleOwner, Observer {
-            if(it == true){
+            if (it == true) {
                 this.findNavController().navigate(
-                    AllRecipesFragmentDirections.actionAllRecipesFragment2ToFavouriteRecipeFragment(profileId)
+                    AllRecipesFragmentDirections.actionAllRecipesFragment2ToFavouriteRecipeFragment(
+                        profileId
+                    )
                 )
                 recipeViewModel.navigationToFavouriteRecipesDone()
             }
         })
         recipeViewModel.navigateToRecommendedRecipes.observe(viewLifecycleOwner, Observer {
-            if(it == true){
-                this.findNavController().navigate(AllRecipesFragmentDirections.actionAllRecipesFragment2ToRecommendedRecipe2(arguments!!.getLong("profileId",0)))
+            if (it == true) {
+                this.findNavController().navigate(
+                    AllRecipesFragmentDirections.actionAllRecipesFragment2ToRecommendedRecipe2(
+                        arguments!!.getLong("profileId", 0)
+                    )
+                )
                 recipeViewModel.navigationToRecommendedRecipesDone()
             }
 
         })
 
         recipeViewModel.navigateToMyIngredients.observe(viewLifecycleOwner, Observer {
-            if(it == true){
+            if (it == true) {
                 this.findNavController().navigate(
-                    AllRecipesFragmentDirections.actionAllRecipesFragment2ToIngredientsFragment(profileId)
+                    AllRecipesFragmentDirections.actionAllRecipesFragment2ToIngredientsFragment(
+                        profileId
+                    )
                 )
                 recipeViewModel.navigationToMyIngredientsDone()
             }
@@ -71,14 +80,19 @@ class AllRecipesFragment : Fragment(){
         binding.recipeRecycler.layoutManager = LinearLayoutManager(context)
         binding.fabAllRecipes.setOnClickListener {
             this.findNavController().navigate(
-                AllRecipesFragmentDirections.actionAllRecipesFragment2ToCreateRecipeFragment(profileId)
+                AllRecipesFragmentDirections.actionAllRecipesFragment2ToCreateRecipeFragment(
+                    profileId
+                )
             )
         }
 
         recipeViewModel.navigateToDetailedRecipe.observe(viewLifecycleOwner, Observer {
-            if(it != null){
+            if (it != null) {
                 this.findNavController().navigate(
-                    AllRecipesFragmentDirections.actionAllRecipesFragment2ToDetailRecipeFragment(it, profileId)
+                    AllRecipesFragmentDirections.actionAllRecipesFragment2ToDetailRecipeFragment(
+                        it,
+                        profileId
+                    )
                 )
                 recipeViewModel.navigationToDetailedRecipeDone()
             }

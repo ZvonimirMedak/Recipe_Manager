@@ -14,13 +14,14 @@ import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.databinding.AddNewProfileBinding
 import kotlinx.android.synthetic.main.add_new_profile.*
 
-class NewProfileFragment : Fragment(){
+class NewProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding : AddNewProfileBinding = DataBindingUtil.inflate(inflater, R.layout.add_new_profile, container, false)
+        val binding: AddNewProfileBinding =
+            DataBindingUtil.inflate(inflater, R.layout.add_new_profile, container, false)
         val application = requireNotNull(this.activity).application
         val database = AppDatabase.getInstance(application)
         val databaseDao = database.profileDao
@@ -29,11 +30,8 @@ class NewProfileFragment : Fragment(){
         profileViewModel.username = username
         binding.viewModel = profileViewModel
         profileViewModel.navigateToProfileFragment.observe(this, Observer {
-            if(it == true){
+            if (it == true) {
                 activity!!.onBackPressed()
-//                this.findNavController().navigate(
-//                    NewProfileFragmentDirections.actionNewProfileFragmentToProfileFragment(username)
-//                )
                 profileViewModel.navigateToProfileFragmentDone()
             }
         })
@@ -47,8 +45,9 @@ class NewProfileFragment : Fragment(){
 
         return binding.root
     }
-    private fun getAllBoxes() : ArrayList<Boolean>{
-        val list =  ArrayList<Boolean>()
+
+    private fun getAllBoxes(): ArrayList<Boolean> {
+        val list = ArrayList<Boolean>()
         list.add(lactose_intolerance_check.isChecked)
         list.add(gluten_intolerance_check.isChecked)
         list.add(caffeine_intolerance_check.isChecked)

@@ -18,62 +18,75 @@ import com.example.recipemanager.databinding.MyIngredientsBinding
 import kotlinx.android.synthetic.main.popup.view.*
 
 
-class IngredientsFragment : Fragment(){
-    lateinit var adapter : IngredientsRecyclerAdapter
+class IngredientsFragment : Fragment() {
+    lateinit var adapter: IngredientsRecyclerAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding : MyIngredientsBinding = DataBindingUtil.inflate(inflater, R.layout.my_ingredients, container, false)
+        val binding: MyIngredientsBinding =
+            DataBindingUtil.inflate(inflater, R.layout.my_ingredients, container, false)
         val application = requireNotNull(this.activity).application
         val database = AppDatabase.getInstance(application)
         val ingredientDao = database.ingredientDao
         val profileId = arguments!!.getLong("profileId", 0)
         val popupWindow = PopupWindow(activity)
-        val popupView =inflater.inflate(R.layout.popup, null)
+        val popupView = inflater.inflate(R.layout.popup, null)
         val deletePopup = PopupWindow(activity)
         val deletePopupView = inflater.inflate(R.layout.popup_delete, null)
         deletePopup.isFocusable = true
         deletePopup.contentView = deletePopupView
-        val viewModel = IngredientsViewModel(ingredientDao, deletePopup, deletePopupView, binding.root)
+        val viewModel =
+            IngredientsViewModel(ingredientDao, deletePopup, deletePopupView, binding.root)
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
             adapter.deleteIngredient(it)
         }, ingredientDao, deletePopup, deletePopupView, binding.root, profileId)
 
         popupWindow.isFocusable = true
         popupWindow.contentView = popupView
-        popupView.insert_button.setOnClickListener{
-            adapter.insertNewIngredient(Ingredient(ingredientText = popupView.ingredient_edit.text.toString(), profileId = profileId), profileId)
+        popupView.insert_button.setOnClickListener {
+            adapter.insertNewIngredient(
+                Ingredient(
+                    ingredientText = popupView.ingredient_edit.text.toString(),
+                    profileId = profileId
+                ), profileId
+            )
             popupWindow.dismiss()
         }
         viewModel.navigateToAllRecipes.observe(viewLifecycleOwner, Observer {
-            if(it == true){
+            if (it == true) {
                 this.findNavController().navigate(
-                    IngredientsFragmentDirections.actionIngredientsFragmentToAllRecipesFragment2(profileId)
+                    IngredientsFragmentDirections.actionIngredientsFragmentToAllRecipesFragment2(
+                        profileId
+                    )
                 )
                 viewModel.navigationToAllRecipesDone()
             }
         })
 
         viewModel.navigateToRecommendedRecipes.observe(viewLifecycleOwner, Observer {
-            if(it == true){
+            if (it == true) {
                 this.findNavController().navigate(
-                    IngredientsFragmentDirections.actionIngredientsFragmentToRecommendedRecipe2(profileId)
+                    IngredientsFragmentDirections.actionIngredientsFragmentToRecommendedRecipe2(
+                        profileId
+                    )
                 )
                 viewModel.navigationToRecommendedRecipesDone()
             }
         })
         viewModel.navigateToFavouriteRecipes.observe(viewLifecycleOwner, Observer {
-            if(it == true){
+            if (it == true) {
                 this.findNavController().navigate(
-                    IngredientsFragmentDirections.actionIngredientsFragmentToFavouriteRecipeFragment(profileId)
+                    IngredientsFragmentDirections.actionIngredientsFragmentToFavouriteRecipeFragment(
+                        profileId
+                    )
                 )
                 viewModel.navigationToFavouriteRecipesDone()
             }
         })
 
-        binding.allRecipesButton.setOnClickListener{
+        binding.allRecipesButton.setOnClickListener {
             viewModel.navigateToAllRecipes()
         }
         binding.recommendedRecipesButton.setOnClickListener {
@@ -87,7 +100,7 @@ class IngredientsFragment : Fragment(){
         binding.myIngredientsRecycler.adapter = adapter
         adapter.submitNewList(profileId)
         binding.fabIngredients.setOnClickListener {
-            popupWindow.showAtLocation(binding.root, Gravity.CENTER, 0,0)
+            popupWindow.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
         }
         return binding.root
 

@@ -6,7 +6,8 @@ import com.example.recipemanager.appDatabase.ProfileDao
 
 class DetailProfileViewModelFactory(
     private val profileId: Long,
-    private val dataSource: ProfileDao) : ViewModelProvider.Factory {
+    private val dataSource: ProfileDao
+) : ViewModelProvider.Factory {
     @Suppress("unchecked_cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(DetailProfileViewModel::class.java)) {

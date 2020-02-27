@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "ingredient_table")
 data class Ingredient(
     @PrimaryKey(autoGenerate = true)
-    val ingredientId : Long = 0L,
-    val ingredientText : String,
-    var recipeId : Long? = null,
-    var profileId : Long? = null
+    val ingredientId: Long = 0L,
+    val ingredientText: String,
+    var recipeId: Long? = null,
+    var profileId: Long? = null
 )

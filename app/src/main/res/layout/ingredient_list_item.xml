@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <data>
+
         <variable
             name="ingredient"
             type="com.example.recipemanager.appDatabase.Ingredient" />
+
         <variable
             name="onClickListener"
             type="com.example.recipemanager.ingredients.IngredientOnClickListener" />
     </data>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:onClick="@{() -> onClickListener.onClick(ingredient)}">
-    <TextView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:id="@+id/ingredient_text"
-        android:text="@{ingredient.ingredientText}"/>
+        android:layout_height="100dp"
+        android:onClick="@{() -> onClickListener.onClick(ingredient)}"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/ingredient_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@{ingredient.ingredientText}"
+            android:textSize="20sp" />
+
+    </LinearLayout>
 </layout>

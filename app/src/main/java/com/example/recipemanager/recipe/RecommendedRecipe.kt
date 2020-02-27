@@ -13,30 +13,31 @@ import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.databinding.RecommendedRecipesBinding
 import kotlinx.android.synthetic.main.recommended_recipes.view.*
 
-class RecommendedRecipe : Fragment(){
+class RecommendedRecipe : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding : RecommendedRecipesBinding = DataBindingUtil.inflate(inflater, R.layout.recommended_recipes, container, false)
+        val binding: RecommendedRecipesBinding =
+            DataBindingUtil.inflate(inflater, R.layout.recommended_recipes, container, false)
         val profileId = arguments!!.getLong("profileId", 0)
         val application = requireNotNull(this.activity).application
         val database = AppDatabase.getInstance(application)
-        val recipeDao =  database.recipeDao
+        val recipeDao = database.recipeDao
         val profileDao = database.profileDao
         val favouriteDao = database.favouriteDao
         val recipeViewModel = RecommendedRecipeViewModel()
         val adapter = AllRecipeRecyclerAdapter(RecipeOnClickListener {
             recipeViewModel.navigateToDetailedRecipe(it)
-        }, recipeDao, profileDao, profileId, favouriteDao )
+        }, recipeDao, profileDao, profileId, favouriteDao)
         binding.viewModel = recipeViewModel
 
 
         binding.recommendedRecipes.adapter = adapter
         binding.recommendedRecipes.layoutManager = LinearLayoutManager(context)
         adapter.submitNewRecommendedList()
-        binding.allRecipesButton.setOnClickListener{
+        binding.allRecipesButton.setOnClickListener {
             recipeViewModel.navigateToAllRecipes()
         }
         binding.myIngredientsButton.setOnClickListener {
@@ -46,33 +47,42 @@ class RecommendedRecipe : Fragment(){
             recipeViewModel.navigateToFavouriteRecipes()
         }
         recipeViewModel.navigateToAllRecipes.observe(viewLifecycleOwner, Observer {
-            if(it == true){
+            if (it == true) {
                 this.findNavController().navigate(
-                    RecommendedRecipeDirections.actionRecommendedRecipe2ToAllRecipesFragment2(profileId)
+                    RecommendedRecipeDirections.actionRecommendedRecipe2ToAllRecipesFragment2(
+                        profileId
+                    )
                 )
                 recipeViewModel.navigationToAllRecipesDone()
             }
         })
         recipeViewModel.navigateToDetailedRecipe.observe(viewLifecycleOwner, Observer {
-            if(it != null){
+            if (it != null) {
                 this.findNavController().navigate(
-                    RecommendedRecipeDirections.actionRecommendedRecipe2ToDetailRecipeFragment(it, profileId)
+                    RecommendedRecipeDirections.actionRecommendedRecipe2ToDetailRecipeFragment(
+                        it,
+                        profileId
+                    )
                 )
                 recipeViewModel.navigationToDetailedRecipeDone()
             }
         })
         recipeViewModel.navigateToMyIngredients.observe(viewLifecycleOwner, Observer {
-            if(it == true){
+            if (it == true) {
                 this.findNavController().navigate(
-                    RecommendedRecipeDirections.actionRecommendedRecipe2ToIngredientsFragment(profileId)
+                    RecommendedRecipeDirections.actionRecommendedRecipe2ToIngredientsFragment(
+                        profileId
+                    )
                 )
                 recipeViewModel.navigationToMyIngredientsDone()
             }
         })
         recipeViewModel.navigateToFavouriteRecipes.observe(viewLifecycleOwner, Observer {
-            if(it == true){
+            if (it == true) {
                 this.findNavController().navigate(
-                    RecommendedRecipeDirections.actionRecommendedRecipe2ToFavouriteRecipeFragment(profileId)
+                    RecommendedRecipeDirections.actionRecommendedRecipe2ToFavouriteRecipeFragment(
+                        profileId
+                    )
                 )
                 recipeViewModel.navigationToFavouriteRecipesDone()
             }

@@ -12,7 +12,7 @@ import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.databinding.RegistrationFormBinding
 
-class RegistrationFragment : Fragment(){
+class RegistrationFragment : Fragment() {
 
     private lateinit var binding: RegistrationFormBinding
 
@@ -25,15 +25,18 @@ class RegistrationFragment : Fragment(){
         val application = requireNotNull(this.activity).application
         val appDatabase = AppDatabase.getInstance(application)
         val databaseDao = appDatabase.userDatabaseDao
-        val registrationViewModel = RegistrationViewModel( databaseDao)
+        val registrationViewModel = RegistrationViewModel(databaseDao)
         binding.registrationViewModel = registrationViewModel
         binding.doneButton.setOnClickListener {
-            registrationViewModel.insertNewUser(binding.regUsernameEdit.text.toString(),
-                binding.regPasswordEdit.text.toString(), binding.regConfirmpassEdit.text.toString())
+            registrationViewModel.insertNewUser(
+                binding.regUsernameEdit.text.toString(),
+                binding.regPasswordEdit.text.toString(), binding.regConfirmpassEdit.text.toString()
+            )
         }
         registrationViewModel.navigateToLogIn.observe(this, Observer {
-            if(it == true){
-                this.findNavController().navigate(RegistrationFragmentDirections.actionRegistrationFragmentToLogInFragment())
+            if (it == true) {
+                this.findNavController()
+                    .navigate(RegistrationFragmentDirections.actionRegistrationFragmentToLogInFragment())
                 registrationViewModel.navigationToLogInDone()
             }
         })

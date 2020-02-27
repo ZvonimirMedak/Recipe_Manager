@@ -18,7 +18,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class ProfileRecyclerAdapter(val onClickListener: ProfileOnClickListener,val databaseDao: ProfileDao) : ListAdapter<DataItem, ProfileRecyclerAdapter.ViewHolder>(ProfileDiffCallback()){
+class ProfileRecyclerAdapter(
+    val onClickListener: ProfileOnClickListener,
+    val databaseDao: ProfileDao
+) : ListAdapter<DataItem, ProfileRecyclerAdapter.ViewHolder>(ProfileDiffCallback()) {
 
 
     private fun getProfiles(username: String) = databaseDao.getAllProfiles(username)
@@ -26,8 +29,8 @@ class ProfileRecyclerAdapter(val onClickListener: ProfileOnClickListener,val dat
     fun submitNewList(username: String) {
         adapterScope.launch {
             val list = getProfiles(username)
-            val items =  list?.map { DataItem.ProfileItem(it) }
-            Log.d("msg",items.toString())
+            val items = list?.map { DataItem.ProfileItem(it) }
+            Log.d("msg", items.toString())
             withContext(Dispatchers.Main) {
                 submitList(items)
             }
@@ -35,7 +38,10 @@ class ProfileRecyclerAdapter(val onClickListener: ProfileOnClickListener,val dat
     }
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileRecyclerAdapter.ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ProfileRecyclerAdapter.ViewHolder {
         return ViewHolder.from(parent)
     }
 
@@ -45,23 +51,26 @@ class ProfileRecyclerAdapter(val onClickListener: ProfileOnClickListener,val dat
 
     }
 
-    class ViewHolder private constructor(val binding : ProfileListItemBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(item: Profile, onClickListener: ProfileOnClickListener){
+    class ViewHolder private constructor(val binding: ProfileListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Profile, onClickListener: ProfileOnClickListener) {
             binding.profile = item
             binding.onClickListener = onClickListener
             binding.executePendingBindings()
         }
-        companion object{
-            fun from(parent: ViewGroup): ViewHolder{
+
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding =ProfileListItemBinding.inflate(layoutInflater, parent, false)
+                val binding = ProfileListItemBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
 
             }
         }
     }
 }
-class ProfileDiffCallback : DiffUtil.ItemCallback<DataItem>(){
+
+class ProfileDiffCallback : DiffUtil.ItemCallback<DataItem>() {
     override fun areItemsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
         return oldItem == newItem
     }
@@ -71,15 +80,16 @@ class ProfileDiffCallback : DiffUtil.ItemCallback<DataItem>(){
     }
 
 }
-class ProfileOnClickListener(val onClickListener :(profileId: Long) -> Unit){
+
+class ProfileOnClickListener(val onClickListener: (profileId: Long) -> Unit) {
     fun onClick(profile: Profile) = onClickListener(profile.profileId)
 }
 
 
-sealed class DataItem{
-    data class ProfileItem(val profile: Profile) : DataItem(){
+sealed class DataItem {
+    data class ProfileItem(val profile: Profile) : DataItem() {
         override val profileId = profile.profileId
     }
 
-    abstract val profileId : Long
+    abstract val profileId: Long
 }

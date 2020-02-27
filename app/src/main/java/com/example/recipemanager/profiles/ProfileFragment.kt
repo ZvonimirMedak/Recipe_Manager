@@ -20,7 +20,7 @@ import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.databinding.ProfilePageBinding
 
-class ProfileFragment : Fragment(){
+class ProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
@@ -37,18 +37,20 @@ class ProfileFragment : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding : ProfilePageBinding = DataBindingUtil.inflate(inflater,
-            R.layout.profile_page,container, false)
-         val application = requireNotNull(this.activity).application
-         val database = AppDatabase.getInstance(application)
+        val binding: ProfilePageBinding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.profile_page, container, false
+        )
+        val application = requireNotNull(this.activity).application
+        val database = AppDatabase.getInstance(application)
         val profileViewModel = ProfileViewModel(database.profileDao)
         binding.viewModel = profileViewModel
         binding.setLifecycleOwner(this)
         val adapter = ProfileRecyclerAdapter(ProfileOnClickListener {
             profileViewModel.onProfileClicked(it)
-        },database.profileDao)
+        }, database.profileDao)
 
-        val username  = arguments!!.getString("username", "")
+        val username = arguments!!.getString("username", "")
         adapter.submitNewList(username)
 
         binding.profileRecycler.layoutManager = LinearLayoutManager(context)
@@ -56,27 +58,31 @@ class ProfileFragment : Fragment(){
 
 
 
-       profileViewModel.navigateToDetailedProfile.observe(this, Observer {
-            profile -> profile?.let {
-           this.findNavController().navigate(
-               ProfileFragmentDirections.actionProfileFragmentToDetailProfileFragment(it))
-           profileViewModel.navigateToDetailProfileDone()
-       }
-       }
-       )
+        profileViewModel.navigateToDetailedProfile.observe(this, Observer { profile ->
+            profile?.let {
+                this.findNavController().navigate(
+                    ProfileFragmentDirections.actionProfileFragmentToDetailProfileFragment(it)
+                )
+                profileViewModel.navigateToDetailProfileDone()
+            }
+        }
+        )
 
         profileViewModel.navigateToNewProfileFragment.observe(this, Observer {
-            if(it == true){
-               this.findNavController().navigate(
-                   ProfileFragmentDirections.actionProfileFragmentToNewProfileFragment(username))
+            if (it == true) {
+                this.findNavController().navigate(
+                    ProfileFragmentDirections.actionProfileFragmentToNewProfileFragment(username)
+                )
                 profileViewModel.navigateToNewProfileFragmentDone()
             }
         })
 
         return binding.root
     }
-    private fun hideKeyboard(fragment : Fragment){
-        val imm = fragment.context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+    private fun hideKeyboard(fragment: Fragment) {
+        val imm =
+            fragment.context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
 

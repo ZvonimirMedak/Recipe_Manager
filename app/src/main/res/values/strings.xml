@@ -43,5 +43,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="photo_url">Photo Url</string>
+    <string name="update">Update</string>
 
 </resources>

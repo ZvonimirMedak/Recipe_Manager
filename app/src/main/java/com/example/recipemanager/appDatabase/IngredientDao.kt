@@ -6,17 +6,22 @@ import androidx.room.Query
 import androidx.room.Update
 
 @Dao
-interface IngredientDao{
+interface IngredientDao {
     @Insert
-    fun insertAllIngredients(ingredients : List<Ingredient>)
+    fun insertAllIngredients(ingredients: List<Ingredient>)
+
     @Insert
     fun insertIngredient(ingredient: Ingredient)
+
     @Query("SELECT * FROM ingredient_table WHERE recipeId =:key")
-    fun getAllRecipeIngredients(key : Long) : List<Ingredient>?
+    fun getAllRecipeIngredients(key: Long): List<Ingredient>?
+
     @Query("SELECT * FROM ingredient_table WHERE profileId =:key")
-    fun getAllProfileIngredients(key : Long) : List<Ingredient>?
+    fun getAllProfileIngredients(key: Long): List<Ingredient>?
+
     @Query("DELETE FROM ingredient_table WHERE recipeId =:key")
     fun deleteRecipeIngredient(key: Long)
+
     @Query("DELETE FROM ingredient_table WHERE ingredientId =:key")
-    fun deleteIngredient(key : Long)
+    fun deleteIngredient(key: Long)
 }

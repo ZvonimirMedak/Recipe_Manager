@@ -7,13 +7,13 @@ import com.example.recipemanager.appDatabase.User
 import com.example.recipemanager.appDatabase.UserDatabaseDao
 import kotlinx.coroutines.*
 
-class LogInViewModel (val userDatabaseDao: UserDatabaseDao): ViewModel(){
+class LogInViewModel(val userDatabaseDao: UserDatabaseDao) : ViewModel() {
     private var _navigateToRegisterFragment = MutableLiveData<Boolean?>()
-    val navigateToRegisterFragment : LiveData<Boolean?>
+    val navigateToRegisterFragment: LiveData<Boolean?>
         get() = _navigateToRegisterFragment
 
     private var _navigateToProfileFragment = MutableLiveData<Boolean?>()
-    val navigateToProfileFragment : LiveData<Boolean?>
+    val navigateToProfileFragment: LiveData<Boolean?>
         get() = _navigateToProfileFragment
 
     private val logInJob = Job()
@@ -24,41 +24,41 @@ class LogInViewModel (val userDatabaseDao: UserDatabaseDao): ViewModel(){
         logInJob.cancel()
     }
 
-    fun registrationWanted(){
+    fun registrationWanted() {
         _navigateToRegisterFragment.value = true
     }
 
-    fun navigationToRegisterDone(){
-        _navigateToRegisterFragment.value  = null
+    fun navigationToRegisterDone() {
+        _navigateToRegisterFragment.value = null
     }
 
-    private var currentUser : User? = null
-    fun onVerificationClicked(username: String, password : String) {
+    private var currentUser: User? = null
+    fun onVerificationClicked(username: String, password: String) {
         uiScope.launch {
             var done = false
-            withContext(Dispatchers.IO){
+            withContext(Dispatchers.IO) {
                 currentUser = userDatabaseDao.getUser(username)
-                if(currentUser != null){
-                    if(passwordCheck(currentUser, password)){
+                if (currentUser != null) {
+                    if (passwordCheck(currentUser, password)) {
                         done = true
                     }
 
                 }
 
             }
-            if(done == true)
-            _navigateToProfileFragment.value = true
+            if (done)
+                _navigateToProfileFragment.value = true
 
         }
 
 
     }
-    fun navigationToProfileFragmentDone(){
+
+    fun navigationToProfileFragmentDone() {
         _navigateToProfileFragment.value = null
     }
-    private fun passwordCheck(user: User?, password: String): Boolean{
+
+    private fun passwordCheck(user: User?, password: String): Boolean {
         return user!!.password == password
     }
 }
-
-

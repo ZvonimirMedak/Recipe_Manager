@@ -20,6 +20,18 @@ class DetailRecipeViewModel(
     val navigationToAllRecipes: LiveData<Boolean?>
         get() = _navigationToAllRecipes
 
+    private val _navigateToEditRecipe = MutableLiveData<Boolean?>()
+    val navigateToEditRecipe : LiveData<Boolean?>
+    get() = _navigateToEditRecipe
+
+    fun navigateToEditRecipe(){
+        _navigateToEditRecipe.value = true
+    }
+
+    fun navigationToEditRecipeDone(){
+        _navigateToEditRecipe.value = null
+    }
+
     private fun navigationToAllRecipesWanted() {
         _navigationToAllRecipes.value = true
     }
@@ -31,7 +43,7 @@ class DetailRecipeViewModel(
     fun deleteRecipe(recipe: Recipe, profileId: Long) {
         coroutineScope.launch {
             val favourite = favouriteDao.getFavouriteRecipe(profileId, recipe.recipeId)
-            if(favourite != null){
+            if (favourite != null) {
                 favouriteDao.deleteFavourite(favourite.favouriteId)
             }
             recipeDao.deleteRecipe(recipe.recipeId)
@@ -48,12 +60,11 @@ class DetailRecipeViewModel(
 
     fun createFavouriteRecipe(recipeId: Long, profileId: Long) {
         coroutineScope.launch {
-            if(favouriteChecker.value == null){
+            if (favouriteChecker.value == null) {
                 favouriteDao.insertFavourite(Favourite(profileId = profileId, recipeId = recipeId))
                 checkFavourite(recipeId, profileId)
-            }
-            else{
-                withContext(Dispatchers.Main){
+            } else {
+                withContext(Dispatchers.Main) {
                     favouriteChecker.value = null
                 }
                 val favourite = favouriteDao.getFavouriteRecipe(profileId, recipeId)
@@ -62,8 +73,6 @@ class DetailRecipeViewModel(
 
         }
     }
-
-
 
     fun checkFavourite(recipeId: Long, profileId: Long) {
         coroutineScope.launch {

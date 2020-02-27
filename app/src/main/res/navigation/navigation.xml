@@ -166,6 +166,9 @@
             app:destination="@id/favouriteRecipeFragment"
             app:popUpTo="@+id/detailRecipeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_detailRecipeFragment_to_editRecipeFragment"
+            app:destination="@id/editRecipeFragment" />
     </fragment>
     <fragment
         android:id="@+id/createRecipeFragment"
@@ -201,5 +204,21 @@
         <action
             android:id="@+id/action_favouriteRecipeFragment_to_detailRecipeFragment"
             app:destination="@id/detailRecipeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editRecipeFragment"
+        android:name="com.example.recipemanager.editRecipe.EditRecipeFragment"
+        android:label="EditRecipeFragment" >
+        <action
+            android:id="@+id/action_editRecipeFragment_to_detailRecipeFragment"
+            app:destination="@id/detailRecipeFragment"
+            app:popUpTo="@+id/editRecipeFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="recipe"
+            app:argType="com.example.recipemanager.appDatabase.Recipe" />
+        <argument
+            android:name="profileId"
+            app:argType="long" />
     </fragment>
 </navigation>

@@ -1,48 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="recipe"
             type="com.example.recipemanager.appDatabase.Recipe" />
+
         <variable
             name="onClickListener"
             type="com.example.recipemanager.recipe.RecipeOnClickListener" />
     </data>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="250dp"
-    android:layout_margin="15dp"
-    android:id="@+id/recipe_list_item"
-    android:onClick="@{() -> onClickListener.onClick(recipe)}">
-    <ImageView
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/recipe_list_item"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/recipeImage"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:gravity="start"
-        android:textSize="30sp"
-        app:layout_constraintTop_toBottomOf="@+id/recipeImage"
-        android:id="@+id/recipeTitle"
-        />
-    <TextView
-        android:id="@+id/recipe_type_text"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@+id/recipeTitle"
-        android:text="@{recipe.typeOfMeal}"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:textSize="20dp"
-        android:id="@+id/time_to_make"
-        app:layout_constraintTop_toBottomOf="@id/recipe_type_text"
-        android:text="@{recipe.timeToMake}"/>
+        android:layout_height="250dp"
+        android:layout_margin="15dp"
+        android:onClick="@{() -> onClickListener.onClick(recipe)}">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/recipeImage"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/recipeTitle"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="start"
+            android:textSize="30sp"
+            app:layout_constraintTop_toBottomOf="@+id/recipeImage" />
+
+        <TextView
+            android:id="@+id/recipe_type_text"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="@{recipe.typeOfMeal}"
+            android:textSize="20sp"
+            app:layout_constraintTop_toBottomOf="@+id/recipeTitle" />
+
+        <TextView
+            android:id="@+id/time_to_make"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="@{recipe.timeToMake}"
+            android:textSize="20dp"
+            app:layout_constraintTop_toBottomOf="@id/recipe_type_text" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
