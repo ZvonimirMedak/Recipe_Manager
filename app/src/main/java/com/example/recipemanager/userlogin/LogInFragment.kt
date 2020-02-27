@@ -9,9 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.recipemanager.R
-import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.databinding.LogInBinding
-import com.example.recipemanager.profiles.ProfileFragment
+import com.example.recipemanager.utils.DatabaseUserUtils
 import kotlinx.android.synthetic.main.log_in.*
 
 class LogInFragment : Fragment() {
@@ -24,45 +23,42 @@ class LogInFragment : Fragment() {
             inflater,
             R.layout.log_in, container, false
         )
-
         val application = requireNotNull(this.activity).application
-        val appDatabase = AppDatabase.getInstance(application)
-        val logInDatabaseDao = appDatabase.userDatabaseDao
-
-        val logInViewModel = LogInViewModel(
-            logInDatabaseDao
-        )
-
-        binding.logInViewModel = logInViewModel
-
+        val databaseUserUtils = DatabaseUserUtils(application)
+        val viewModel = LogInViewModel()
+        binding.viewModel = viewModel
         binding.verifyButton.setOnClickListener {
-            logInViewModel.onVerificationClicked(
+            databaseUserUtils.onVerificationClicked(
                 binding.usernameEdit.text.toString(),
-                binding.passwordEdit.text.toString()
+                binding.passwordEdit.text.toString(),
+                viewModel
             )
         }
 
+        setupNavigationObservers(viewModel)
 
-        logInViewModel.navigateToRegisterFragment.observe(this, Observer {
-            if (it == true) {
-                this.findNavController().navigate(
-                    LogInFragmentDirections.actionLogInFragmentToRegistrationFragment()
-                )
-                logInViewModel.navigationToRegisterDone()
-            }
+        return binding.root
+    }
 
-        })
-
-        logInViewModel.navigateToProfileFragment.observe(this, Observer {
+    private fun setupNavigationObservers(viewModel: LogInViewModel) {
+        viewModel.navigateToProfileFragment.observe(this, Observer {
             if (it == true) {
                 this.findNavController().navigate(
                     LogInFragmentDirections.actionLogInFragmentToProfileFragment(username_edit.text.toString())
                 )
-                logInViewModel.navigationToProfileFragmentDone()
+                viewModel.navigationToProfileFragmentDone()
             }
         })
-        return binding.root
-    }
 
+        viewModel.navigateToRegisterFragment.observe(this, Observer {
+            if (it == true) {
+                this.findNavController().navigate(
+                    LogInFragmentDirections.actionLogInFragmentToRegistrationFragment()
+                )
+                viewModel.navigationToRegisterDone()
+            }
+
+        })
+    }
 
 }

@@ -6,7 +6,7 @@
     <data>
 
         <variable
-            name="logInViewModel"
+            name="viewModel"
             type="com.example.recipemanager.userlogin.LogInViewModel" />
     </data>
 
@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="150dp"
-            android:onClick="@{() -> logInViewModel.registrationWanted()}"
+            android:onClick="@{() -> viewModel.registrationWanted()}"
             android:text="@string/register"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -6,7 +6,7 @@
     <data>
 
         <variable
-            name="registrationViewModel"
+            name="viewModel"
             type="com.example.recipemanager.registration.RegistrationViewModel" />
     </data>
 
