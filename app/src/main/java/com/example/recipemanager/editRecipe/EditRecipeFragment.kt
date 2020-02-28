@@ -57,7 +57,7 @@ class EditRecipeFragment : Fragment(){
         binding.root.setOnTouchListener(object : View.OnTouchListener{
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 databaseIngredientsUtils.hideKeyboard(editRecipeFragment)
-                return true
+                return false
             }
 
         })

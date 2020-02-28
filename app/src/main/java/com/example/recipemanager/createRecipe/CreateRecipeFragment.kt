@@ -4,10 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.PopupWindow
 import androidx.databinding.DataBindingUtil
@@ -63,6 +60,7 @@ class CreateRecipeFragment : Fragment() {
         setupOnClickListeners(binding, viewModel, profileId)
         setupNavigationObserver(viewModel, profileId)
         setupOnTouchListener(binding, this)
+
         return binding.root
     }
 
