@@ -93,7 +93,7 @@ class CreateRecipeFragment : Fragment() {
                     caffeine = binding.caffeineCheck.isChecked,
                     profileId = profileId
                 )
-                viewModel.insertRecipe(recipe, viewModel, binding.root)
+                viewModel.insertRecipe(recipe, binding.root)
             } else {
                 val recipe = Recipe(
                     name = binding.recipeNameEdit.text.toString(),
@@ -108,7 +108,7 @@ class CreateRecipeFragment : Fragment() {
                     ,
                     photoUrl = binding.photoUrlEdit.text.toString()
                 )
-                viewModel.insertRecipe(recipe, viewModel, binding.root)
+                viewModel.insertRecipe(recipe, binding.root)
             }
 
         }

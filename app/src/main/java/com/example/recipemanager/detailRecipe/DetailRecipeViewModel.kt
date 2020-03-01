@@ -14,8 +14,9 @@ import com.example.recipemanager.utils.DatabaseRecipeUtils
 import kotlinx.coroutines.*
 
 class DetailRecipeViewModel(private val activity: Activity, private val databaseRecipeUtils: DatabaseRecipeUtils, private val databaseIngredientsUtils: DatabaseIngredientsUtils): ViewModel() {
-
-    val favouriteChecker = MutableLiveData<Boolean?>()
+    private val _favouriteChecker = MutableLiveData<Boolean?>()
+    val favouriteChecker : LiveData<Boolean?>
+    get() = _favouriteChecker
 
     lateinit var popupView : View
     lateinit var popupWindow : PopupWindow
@@ -42,7 +43,7 @@ class DetailRecipeViewModel(private val activity: Activity, private val database
                 for (favourite in list) {
                     if (favourite.recipeId == recipeId)
                         withContext(Dispatchers.Main) {
-                            favouriteChecker.value = true
+                            _favouriteChecker.value = true
                         }
                 }
             }
@@ -72,7 +73,7 @@ class DetailRecipeViewModel(private val activity: Activity, private val database
                 checkFavourite(recipeId, profileId)
             } else {
                 withContext(Dispatchers.Main) {
-                    favouriteChecker.value = null
+                    _favouriteChecker.value = null
                 }
                 val favourite = databaseRecipeUtils.getFavouriteRecipe(profileId, recipeId)
                 databaseRecipeUtils.deleteFavourite(favourite!!.favouriteId)

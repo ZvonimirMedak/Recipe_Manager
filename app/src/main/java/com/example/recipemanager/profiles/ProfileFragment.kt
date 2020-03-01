@@ -16,7 +16,6 @@ import com.example.recipemanager.databinding.ProfilePageBinding
 import com.example.recipemanager.utils.DatabaseProfileUtils
 
 class ProfileFragment : Fragment() {
-    lateinit var databaseProfileUtils :DatabaseProfileUtils
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -27,14 +26,14 @@ class ProfileFragment : Fragment() {
             R.layout.profile_page, container, false
         )
         val application = requireNotNull(this.activity).application
-        databaseProfileUtils= DatabaseProfileUtils(application)
-        val viewModel = ProfileViewModel(activity!!, binding.root)
+        val databaseProfileUtils= DatabaseProfileUtils(application)
+        val viewModel = ProfileViewModel(activity!!, databaseProfileUtils)
         binding.viewModel = viewModel
         val adapter = ProfileRecyclerAdapter(ProfileOnClickListener {
             viewModel.navigateToDetailProfile(it)
         })
         val username = arguments!!.getString("username", "")
-        databaseProfileUtils.submitNewList(username, adapter)
+        viewModel.submitNewList(adapter,username)
         binding.profileRecycler.layoutManager = LinearLayoutManager(context)
         binding.profileRecycler.adapter = adapter
         setupNavigationObservers(viewModel, username)

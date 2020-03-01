@@ -8,11 +8,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.appDatabase.ProfileDao
+import com.example.recipemanager.utils.DatabaseProfileUtils
 import kotlinx.coroutines.*
 
-class DetailProfileViewModel : ViewModel() {
-
-    val currentProfile = MutableLiveData<Profile?>()
+class DetailProfileViewModel(private val databaseProfileUtils: DatabaseProfileUtils) : ViewModel() {
+    private val _currentProfile = MutableLiveData<Profile?>()
+    val currentProfile : LiveData<Profile?>
+    get() = _currentProfile
 
     private val _navigateToProfileFragment = MutableLiveData<Boolean?>()
     val navigateToProfileFragment: LiveData<Boolean?>
@@ -22,7 +24,23 @@ class DetailProfileViewModel : ViewModel() {
     val navigateToRecipes: LiveData<Boolean?>
         get() = _navigateToRecipes
 
+    private val job = Job()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
 
+    fun deleteProfile(profileId : Long) {
+        coroutineScope.launch {
+            databaseProfileUtils.deleteProfile(profileId)
+
+        }
+    }
+    fun getProfileFromDatabase(profileId: Long) {
+        coroutineScope.launch {
+            val profile = databaseProfileUtils.getProfile(profileId)
+            withContext(Dispatchers.Main) {
+                _currentProfile.value = profile
+            }
+        }
+    }
     fun navigateToRecipes() {
         _navigateToRecipes.value = true
     }
@@ -39,4 +57,8 @@ class DetailProfileViewModel : ViewModel() {
         _navigateToProfileFragment.value = null
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        job.cancel()
+    }
 }

@@ -1,16 +1,14 @@
 package com.example.recipemanager.detailProfile
 
-import android.annotation.SuppressLint
-import android.app.Activity
+
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
+
 import androidx.navigation.fragment.findNavController
 import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
@@ -26,7 +24,7 @@ import kotlinx.coroutines.withContext
 import kotlin.math.log
 
 class DetailProfileFragment : Fragment() {
-    private lateinit var databaseProfileUtils: DatabaseProfileUtils
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,9 +35,9 @@ class DetailProfileFragment : Fragment() {
         val username = arguments!!.getString("username")
         val profileId = arguments!!.getLong("profileId", 0)
         val application = requireNotNull(this.activity).application
-        val viewModel = DetailProfileViewModel()
-        databaseProfileUtils = DatabaseProfileUtils(application)
-        databaseProfileUtils.getProfileFromDatabase(profileId, viewModel)
+        val databaseProfileUtils = DatabaseProfileUtils(application)
+        val viewModel = DetailProfileViewModel(databaseProfileUtils)
+        viewModel.getProfileFromDatabase(profileId)
         setupNavigationObservers(viewModel, username!!, profileId)
         setupOnClickListeners(binding, viewModel, profileId)
         setupProfileObserver(viewModel, binding)
@@ -81,8 +79,8 @@ class DetailProfileFragment : Fragment() {
     }
     private fun setupOnClickListeners(binding: ProfileDetailBinding, viewModel: DetailProfileViewModel, profileId: Long){
         binding.deleteButton.setOnClickListener {
-            databaseProfileUtils.deleteProfile(profileId)
-            activity!!.onBackPressed()
+            viewModel.deleteProfile(profileId)
+            viewModel.navigateToProfileFragment()
         }
 
         binding.selectButton.setOnClickListener {

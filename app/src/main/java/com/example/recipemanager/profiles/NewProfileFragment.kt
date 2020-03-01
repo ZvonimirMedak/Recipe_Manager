@@ -28,7 +28,7 @@ class NewProfileFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.add_new_profile, container, false)
         val application = requireNotNull(this.activity).application
         databaseProfileUtils = DatabaseProfileUtils(application)
-        val viewModel = ProfileViewModel(activity!!, binding.root)
+        val viewModel = ProfileViewModel(activity!!, databaseProfileUtils)
         val username = arguments!!.getString("username")
         binding.viewModel = viewModel
         setupNavigationObserver(viewModel)
@@ -50,7 +50,7 @@ class NewProfileFragment : Fragment() {
     private fun setupOnClickListeners(binding : AddNewProfileBinding, viewModel: ProfileViewModel, username : String ){
         binding.createButton.setOnClickListener {
             val checkedBoxes = getAllBoxes()
-            databaseProfileUtils.inputProfile(profile_name_edit.text.toString(), checkedBoxes, username, viewModel)
+            viewModel.inputProfile(profile_name_edit.text.toString(), checkedBoxes, username,binding.root)
         }
     }
 

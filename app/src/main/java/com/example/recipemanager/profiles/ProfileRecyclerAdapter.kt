@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.appDatabase.ProfileDao
 import com.example.recipemanager.databinding.ProfileListItemBinding
+import com.example.recipemanager.utils.DatabaseProfileUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,6 +23,9 @@ class ProfileRecyclerAdapter(
     private val onClickListener: ProfileOnClickListener
 ) : ListAdapter<Profile, ProfileRecyclerAdapter.ViewHolder>(ProfileDiffCallback()) {
 
+
+
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -29,7 +33,7 @@ class ProfileRecyclerAdapter(
         return ViewHolder.from(parent)
     }
 
-    override fun onBindViewHolder(holder: ProfileRecyclerAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val profile = getItem(position)
         holder.bind(profile, onClickListener)
 

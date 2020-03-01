@@ -37,6 +37,7 @@ class CreateRecipeViewModel(private val activity: Activity, private val database
     private lateinit var deletePopupView : View
     init {
         setupPopup()
+
     }
 
     private val job = Job()
@@ -101,7 +102,7 @@ class CreateRecipeViewModel(private val activity: Activity, private val database
                 Color.TRANSPARENT)
         )
     }
-    fun insertRecipe(recipe: Recipe, viewModel : CreateRecipeViewModel, rootLayout: View) {
+    fun insertRecipe(recipe: Recipe, rootLayout: View) {
 
         coroutineScope.launch {
             if (!checkExistence(recipe.name)) {
@@ -110,13 +111,13 @@ class CreateRecipeViewModel(private val activity: Activity, private val database
                 val foundRecipe = databaseRecipeUtils.getRecipeByName(recipe.name)
                 createRecipeIngredientsWithDelete(foundRecipe!!, list!!)
                 withContext(Dispatchers.Main) {
-                    viewModel.navigateToAllRecipes()
+                    navigateToAllRecipes()
                 }
             }
             else{
                 withContext(Dispatchers.Main){
-                    viewModel.popupView.error_text.text = "Recipe with that name already exists or the name is empty"
-                    viewModel.popupWindow.showAtLocation(rootLayout, Gravity.CENTER, 0,0)
+                    popupView.error_text.text = "Recipe with that name already exists or the name is empty"
+                    popupWindow.showAtLocation(rootLayout, Gravity.CENTER, 0,0)
                 }
             }
         }
