@@ -12,28 +12,30 @@ class DatabaseRecipeUtils (application: Application){
     private val favouriteDao = database.favouriteDao
     private val recipeDao = database.recipeDao
     private val profileDao = database.profileDao
-    private val job = Job()
-    private val coroutineScope = CoroutineScope(job + Dispatchers.IO)
-
-
-
 
     fun getRecipes(): List<Recipe>? = recipeDao.getAllrecipes()
+
     fun getProfile(profileId: Long) = profileDao.getProfile(profileId)
+
     fun getFavourites(profileId: Long) = favouriteDao.getAllProfileFavouirtes(profileId)
+
     fun getRecipe(recipeId : Long) = recipeDao.getRecipe(recipeId)
+
     fun insertRecipe(recipe: Recipe) = recipeDao.insertRecipe(recipe)
+
     fun getRecipeByName(recipeName: String) = recipeDao.getNamedRecipe(recipeName)
+
     fun getFavouriteRecipe(profileId: Long, recipeId: Long) = favouriteDao.getFavouriteRecipe(profileId, recipeId)
+
     fun deleteFavourite(favouriteId: Long) = favouriteDao.deleteFavourite(favouriteId)
+
     fun deleteRecipe(recipeId: Long) = recipeDao.deleteRecipe(recipeId)
+
     fun insertFavourite(favourite: Favourite) = favouriteDao.insertFavourite(favourite)
+
     fun updateRecipe(name : String, photoUrl : String, timeToMake : String, typeOfMeal: String, description : String,
                      gluten : Boolean, fructose : Boolean, lactose : Boolean, caffeine : Boolean, recipeId: Long) =
         recipeDao.updateRecipe(name, photoUrl, timeToMake, typeOfMeal, description, gluten, fructose, lactose, caffeine, recipeId)
-
-
-
 
 
 }

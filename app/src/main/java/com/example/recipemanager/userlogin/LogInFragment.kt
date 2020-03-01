@@ -27,10 +27,10 @@ class LogInFragment : Fragment() {
         )
         val application = requireNotNull(this.activity).application
         databaseUserUtils = DatabaseUserUtils(application)
-        val viewModel = LogInViewModel(activity!!, binding.root)
+        val viewModel = LogInViewModel(activity!!, databaseUserUtils)
         binding.viewModel = viewModel
         setupNavigationObservers(viewModel)
-        setupOnClickListeners(binding, viewModel, this)
+        setupOnClickListeners(binding, viewModel)
         setupOnTouchListeners(binding, this)
         return binding.root
     }
@@ -66,14 +66,14 @@ class LogInFragment : Fragment() {
         })
     }
 
-    private fun setupOnClickListeners(binding: LogInBinding, viewModel: LogInViewModel, fragment : LogInFragment) {
+    private fun setupOnClickListeners(binding: LogInBinding, viewModel: LogInViewModel) {
         binding.verifyButton.setOnClickListener {
-            databaseUserUtils.onVerificationClicked(
+            viewModel.onVerificationClicked(
                 binding.usernameEdit.text.toString(),
                 binding.passwordEdit.text.toString(),
-                viewModel
+                binding.root
             )
-            databaseUserUtils.hideKeyboard(fragment)
+            databaseUserUtils.hideKeyboard(this)
         }
     }
 

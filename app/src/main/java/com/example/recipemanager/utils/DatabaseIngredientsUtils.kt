@@ -26,9 +26,13 @@ class DatabaseIngredientsUtils(application: Application) : HideKeyboardUtil{
 
 
     fun getProfileIngredients(profileId: Long) = ingredientDao.getAllProfileIngredients(profileId)
+
     fun getRecipeIngredients(recipeId: Long) = ingredientDao.getAllRecipeIngredients(recipeId)
+
     fun insertIngredient(ingredient: Ingredient) = ingredientDao.insertIngredient(ingredient)
+
     fun deleteIngredient(ingredientId : Long) = ingredientDao.deleteIngredient(ingredientId)
+
     fun deleteRecipeIngredients() = ingredientDao.deleteRecipeIngredient(0)
 
 
