@@ -40,13 +40,13 @@ class EditRecipeFragment : Fragment(){
         val application = requireNotNull(this.activity).application
         databaseIngredientsUtils = DatabaseIngredientsUtils(application)
         databaseRecipeUtils = DatabaseRecipeUtils(application)
-        val viewModel = EditRecipeViewModel()
+        val viewModel = EditRecipeViewModel(databaseRecipeUtils)
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
-            databaseIngredientsUtils.deleteRecipeIngredient(it, recipe!!.recipeId, adapter, binding.root)
-        })
+            adapter.deleteRecipeIngredient(it, recipe!!.recipeId, binding.root)
+        }, databaseIngredientsUtils, activity!!)
         binding.createRecipeIngredientsRecycler.adapter = adapter
         binding.createRecipeIngredientsRecycler.layoutManager = LinearLayoutManager(activity)
-        databaseIngredientsUtils.submitRecipeList(adapter, recipe!!.recipeId)
+        adapter.submitRecipeList(recipe!!.recipeId)
         setupOnClickListeners(binding, viewModel, recipe)
         setupNavigationObserver(viewModel, profileId)
         setupOnTouchListener(binding, this)
@@ -92,16 +92,16 @@ class EditRecipeFragment : Fragment(){
 
     private fun setupOnClickListeners(binding: CreateRecipeBinding, viewModel: EditRecipeViewModel, recipe: Recipe){
         binding.ingredientButton.setOnClickListener {
-            databaseIngredientsUtils.createRecipeIngredient(adapter,Ingredient(ingredientText = binding.ingredientEditRecipe.text.toString(), recipeId = recipe.recipeId), recipe.recipeId)
+            adapter.createRecipeIngredient(Ingredient(ingredientText = binding.ingredientEditRecipe.text.toString(), recipeId = recipe.recipeId), recipe.recipeId)
             binding.ingredientEditRecipe.text.clear()
         }
 
         binding.insertRecipeButton.setOnClickListener {
-            databaseRecipeUtils.updateRecipe(Recipe(
+            viewModel.updateRecipe(Recipe(
                 recipeId = recipe.recipeId, name = binding.recipeNameEdit.text.toString(), timeToMake = binding.timeToMakeEdit.text.toString(),
                 typeOfMeal = binding.typeOfMealEdit.text.toString(), photoUrl = binding.photoUrlEdit.text.toString(), description = binding.descriptionEdit.text.toString(),
                 gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked, caffeine = binding.caffeineCheck.isChecked
-            ), viewModel)
+            ))
         }
     }
 }

@@ -14,15 +14,17 @@ import androidx.lifecycle.ViewModel
 import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.Ingredient
 import com.example.recipemanager.appDatabase.IngredientDao
+import com.example.recipemanager.utils.DatabaseIngredientsUtils
 import kotlinx.android.synthetic.main.popup_delete.view.*
 import kotlinx.coroutines.*
 
 class IngredientsViewModel(
-    val activity: Activity
+    private val activity: Activity
 ) : ViewModel() {
 
     lateinit var popupWindow: PopupWindow
     lateinit var popupView : View
+
 
     private val _navigateToAllRecipes = MutableLiveData<Boolean?>()
     val navigateToAllRecipes: LiveData<Boolean?>
@@ -37,10 +39,11 @@ class IngredientsViewModel(
         get() = _navigateToFavouriteRecipes
 
     init {
-        setupPopupWindows()
+        setupPopupWindow()
     }
 
-    private fun setupPopupWindows(){
+
+    private fun setupPopupWindow(){
 
         val inflater = LayoutInflater.from(activity)
 
@@ -52,7 +55,10 @@ class IngredientsViewModel(
             ColorDrawable(
                 Color.TRANSPARENT)
         )
+
+
     }
+
 
     fun navigateToFavouriteRecipes() {
         _navigateToFavouriteRecipes.value = true

@@ -21,14 +21,12 @@ import com.example.recipemanager.ingredients.IngredientOnClickListener
 import com.example.recipemanager.ingredients.IngredientsRecyclerAdapter
 import com.example.recipemanager.ingredients.IngredientsViewModel
 import com.example.recipemanager.utils.DatabaseIngredientsUtils
-import com.example.recipemanager.utils.DatabaseRecipeWithIngredientsUtils
+import com.example.recipemanager.utils.DatabaseRecipeUtils
 import kotlinx.android.synthetic.main.popup.view.*
 
 class DetailRecipeFragment : Fragment() {
 
     private lateinit var adapter: IngredientsRecyclerAdapter
-    private lateinit var databaseRecipeWithIngredientsUtils: DatabaseRecipeWithIngredientsUtils
-    private lateinit var databaseIngredientsUtils: DatabaseIngredientsUtils
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,35 +39,34 @@ class DetailRecipeFragment : Fragment() {
         val profileId = arguments!!.getLong("profileId")
         binding.recipe = recipe
         val application = requireNotNull(this.activity).application
-        databaseRecipeWithIngredientsUtils = DatabaseRecipeWithIngredientsUtils(application)
-        databaseIngredientsUtils = DatabaseIngredientsUtils(application)
-        val viewModel = DetailRecipeViewModel(activity!!)
-        databaseRecipeWithIngredientsUtils.checkFavourite(recipe!!.recipeId, profileId, viewModel)
+        val databaseIngredientsUtils = DatabaseIngredientsUtils(application)
+        val databaseRecipeUtils = DatabaseRecipeUtils(application)
+        val viewModel = DetailRecipeViewModel(activity!!,databaseRecipeUtils, databaseIngredientsUtils)
+        viewModel.checkFavourite(recipe!!.recipeId, profileId)
         Glide.with(binding.recipeImage).load(recipe.photoUrl).optionalCenterCrop()
             .into(binding.recipeImage)
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
-        })
+        },databaseIngredientsUtils ,activity!!)
         binding.ingredientsRecipeRecycler.layoutManager = LinearLayoutManager(activity)
         binding.ingredientsRecipeRecycler.adapter = adapter
-        databaseIngredientsUtils.submitRecipeList(adapter, recipe.recipeId)
-        setupOnClickListeners(binding, viewModel, recipe, profileId)
+        adapter.submitRecipeList(recipe.recipeId)
+        setupOnClickListeners(binding,recipe, profileId,viewModel)
         setupObservers(viewModel, recipe, profileId, binding)
         return binding.root
     }
 
-    private fun setupOnClickListeners(binding: DetailRecipeBinding, viewModel: DetailRecipeViewModel, recipe : Recipe, profileId : Long){
+    private fun setupOnClickListeners(binding: DetailRecipeBinding, recipe : Recipe, profileId : Long, viewModel: DetailRecipeViewModel){
         binding.favouriteButton.setOnClickListener {
-            databaseRecipeWithIngredientsUtils.createFavouriteRecipe(recipe.recipeId, profileId, viewModel)
+            viewModel.createFavouriteRecipe(recipe.recipeId, profileId)
         }
         binding.editRecipeButton.setOnClickListener {
             viewModel.navigateToEditRecipe()
         }
         binding.deleteRecipeButton.setOnClickListener {
-            databaseRecipeWithIngredientsUtils.deleteRecipe(recipe, profileId, viewModel)
+            viewModel.deleteRecipe(recipe, profileId)
         }
         viewModel.popupView.insert_button.setOnClickListener {
-            databaseIngredientsUtils.insertNewIngredient(
-                adapter,
+            adapter.insertNewIngredient(
                 Ingredient(
                     ingredientText = viewModel.popupView.ingredient_edit.text.toString(),
                     profileId = profileId

@@ -4,8 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.recipemanager.appDatabase.Recipe
+import com.example.recipemanager.recipe.AllRecipeRecyclerAdapter
+import com.example.recipemanager.utils.DatabaseRecipeUtils
+import kotlinx.coroutines.*
 
-class FavouriteRecipeViewModel : ViewModel() {
+class FavouriteRecipeViewModel(private val databaseRecipeUtils: DatabaseRecipeUtils) : ViewModel() {
     private val _navigateToAllRecipes = MutableLiveData<Boolean?>()
     val navigateToAllRecipes: LiveData<Boolean?>
         get() = _navigateToAllRecipes
@@ -21,6 +24,26 @@ class FavouriteRecipeViewModel : ViewModel() {
     private val _navigateToDetailedRecipe = MutableLiveData<Recipe?>()
     val navigateToDetailRecipe: LiveData<Recipe?>
         get() = _navigateToDetailedRecipe
+
+    private val job = Job()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
+
+    fun submitNewFavouriteList(adapter: AllRecipeRecyclerAdapter, profileId : Long) {
+        coroutineScope.launch {
+            val list = databaseRecipeUtils.getFavourites(profileId)
+            val recipeList = mutableListOf<Recipe>()
+            if (list != null) {
+                for (favourite in list) {
+                    recipeList.add(databaseRecipeUtils.getRecipe(favourite.recipeId))
+                }
+            }
+            withContext(Dispatchers.Main) {
+                adapter.submitList(recipeList)
+            }
+
+        }
+    }
+
 
     fun navigateToAllRecipes() {
         _navigateToAllRecipes.value = true
@@ -52,5 +75,10 @@ class FavouriteRecipeViewModel : ViewModel() {
 
     fun navigationToDetailedRecipeDone() {
         _navigateToDetailedRecipe.value = null
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        job.cancel()
     }
 }

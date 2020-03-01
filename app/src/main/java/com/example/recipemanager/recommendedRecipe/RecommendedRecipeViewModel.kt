@@ -3,9 +3,13 @@ package com.example.recipemanager.recommendedRecipe
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.appDatabase.Recipe
+import com.example.recipemanager.recipe.AllRecipeRecyclerAdapter
+import com.example.recipemanager.utils.DatabaseRecipeUtils
+import kotlinx.coroutines.*
 
-class RecommendedRecipeViewModel : ViewModel() {
+class RecommendedRecipeViewModel(private val databaseRecipeUtils: DatabaseRecipeUtils) : ViewModel() {
     private val _navigateToAllRecipes = MutableLiveData<Boolean?>()
     val navigateToAllRecipes: LiveData<Boolean?>
         get() = _navigateToAllRecipes
@@ -22,6 +26,57 @@ class RecommendedRecipeViewModel : ViewModel() {
     val navigateToDetailedRecipe: LiveData<Recipe?>
         get() = _navigateToDetailedRecipe
 
+    private val job = Job()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
+
+    fun submitNewRecommendedList(adapter: AllRecipeRecyclerAdapter, profileId: Long) {
+        coroutineScope.launch {
+            val recipes = databaseRecipeUtils.getRecipes()
+            val profile = databaseRecipeUtils.getProfile(profileId)
+            val recommendedRecipes = mutableListOf<Recipe>()
+            for (recipe in recipes!!) {
+                if (!checkCaffeine(recipe, profile!!) && !checkFructose(
+                        recipe,
+                        profile
+                    ) && !checkGluten(recipe, profile) && !checkLactose(recipe, profile)
+                ) {
+                    recommendedRecipes.add(recipe)
+                }
+            }
+            withContext(Dispatchers.Main) {
+                adapter.submitList(recommendedRecipes)
+            }
+
+        }
+    }
+
+    private fun checkLactose(recipe: Recipe, profile: Profile): Boolean {
+        if (recipe.lactose || profile.lactose_intolerance) {
+            return recipe.lactose == profile.lactose_intolerance
+        }
+        return false
+    }
+
+    private fun checkCaffeine(recipe: Recipe, profile: Profile): Boolean {
+        if (recipe.caffeine || profile.caffeine_intolerance) {
+            return recipe.caffeine == profile.caffeine_intolerance
+        }
+        return false
+    }
+
+    private fun checkGluten(recipe: Recipe, profile: Profile): Boolean {
+        if (recipe.gluten || profile.gluten_intolerance) {
+            return recipe.gluten == profile.gluten_intolerance
+        }
+        return false
+    }
+
+    private fun checkFructose(recipe: Recipe, profile: Profile): Boolean {
+        if (recipe.fructose || profile.fructose_intolerance) {
+            return recipe.fructose == profile.fructose_intolerance
+        }
+        return false
+    }
 
     fun navigateToFavouriteRecipes() {
         _navigateToFavouriteRecipes.value = true
@@ -53,5 +108,10 @@ class RecommendedRecipeViewModel : ViewModel() {
 
     fun navigationToAllRecipesDone() {
         _navigateToAllRecipes.value = null
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        job.cancel()
     }
 }

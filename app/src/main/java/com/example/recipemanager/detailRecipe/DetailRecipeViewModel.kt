@@ -9,15 +9,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.*
+import com.example.recipemanager.utils.DatabaseIngredientsUtils
+import com.example.recipemanager.utils.DatabaseRecipeUtils
 import kotlinx.coroutines.*
 
-class DetailRecipeViewModel(private val activity: Activity): ViewModel() {
+class DetailRecipeViewModel(private val activity: Activity, private val databaseRecipeUtils: DatabaseRecipeUtils, private val databaseIngredientsUtils: DatabaseIngredientsUtils): ViewModel() {
 
     val favouriteChecker = MutableLiveData<Boolean?>()
 
     lateinit var popupView : View
     lateinit var popupWindow : PopupWindow
-
 
     init {
         setupPopupWindows()
@@ -30,8 +31,55 @@ class DetailRecipeViewModel(private val activity: Activity): ViewModel() {
     val navigateToEditRecipe : LiveData<Boolean?>
     get() = _navigateToEditRecipe
 
+    private val job = Job()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
 
 
+    fun checkFavourite(recipeId: Long, profileId: Long) {
+        coroutineScope.launch {
+            val list = databaseRecipeUtils.getFavourites(profileId)
+            if (list != null) {
+                for (favourite in list) {
+                    if (favourite.recipeId == recipeId)
+                        withContext(Dispatchers.Main) {
+                            favouriteChecker.value = true
+                        }
+                }
+            }
+        }
+
+    }
+
+    fun deleteRecipe(recipe: Recipe, profileId: Long) {
+        coroutineScope.launch {
+            val favourite = databaseRecipeUtils.getFavouriteRecipe(profileId, recipe.recipeId)
+            if (favourite != null) {
+                databaseRecipeUtils.deleteFavourite(favourite.favouriteId)
+            }
+            databaseRecipeUtils.deleteRecipe(recipe.recipeId)
+            val list = databaseIngredientsUtils.getRecipeIngredients(recipe.recipeId)
+            for (ingredient in list!!) {
+                databaseIngredientsUtils.deleteIngredient(ingredient.ingredientId)
+            }
+        }
+        navigateToAllRecipes()
+    }
+
+    fun createFavouriteRecipe(recipeId: Long, profileId: Long) {
+        coroutineScope.launch {
+            if (favouriteChecker.value == null) {
+                databaseRecipeUtils.insertFavourite(Favourite(profileId = profileId, recipeId = recipeId))
+                checkFavourite(recipeId, profileId)
+            } else {
+                withContext(Dispatchers.Main) {
+                    favouriteChecker.value = null
+                }
+                val favourite = databaseRecipeUtils.getFavouriteRecipe(profileId, recipeId)
+                databaseRecipeUtils.deleteFavourite(favourite!!.favouriteId)
+            }
+
+        }
+    }
     fun navigateToEditRecipe(){
         _navigateToEditRecipe.value = true
     }

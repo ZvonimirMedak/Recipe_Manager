@@ -24,8 +24,8 @@ class RecommendedRecipe : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.recommended_recipes, container, false)
         val application = requireNotNull(this.activity).application
         val profileId = arguments!!.getLong("profileId")
-        val viewModel = RecommendedRecipeViewModel()
         val databaseRecipeUtils = DatabaseRecipeUtils(application)
+        val viewModel = RecommendedRecipeViewModel(databaseRecipeUtils)
         val adapter = AllRecipeRecyclerAdapter(
             RecipeOnClickListener {
                 viewModel.navigateToDetailedRecipe(it)
@@ -34,7 +34,7 @@ class RecommendedRecipe : Fragment() {
         binding.viewModel = viewModel
         binding.recommendedRecipes.adapter = adapter
         binding.recommendedRecipes.layoutManager = LinearLayoutManager(context)
-        databaseRecipeUtils.submitNewRecommendedList(adapter, profileId)
+        viewModel.submitNewRecommendedList(adapter, profileId)
         setupOnClickListeners(binding, viewModel)
         setupNavigationObservers(viewModel, profileId)
 

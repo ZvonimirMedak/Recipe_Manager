@@ -22,7 +22,6 @@ import kotlinx.android.synthetic.main.popup.view.*
 
 class IngredientsFragment : Fragment() {
     lateinit var adapter: IngredientsRecyclerAdapter
-    lateinit var databaseIngredientsUtils : DatabaseIngredientsUtils
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,15 +30,15 @@ class IngredientsFragment : Fragment() {
         val binding: MyIngredientsBinding =
             DataBindingUtil.inflate(inflater, R.layout.my_ingredients, container, false)
         val application = requireNotNull(this.activity).application
-        databaseIngredientsUtils = DatabaseIngredientsUtils(application)
+        val databaseIngredientsUtils = DatabaseIngredientsUtils(application)
         val profileId = arguments!!.getLong("profileId", 0)
         val viewModel = IngredientsViewModel(activity!!)
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
-            databaseIngredientsUtils.deleteIngredient(it, profileId, adapter, binding.root)
-        })
+            adapter.deleteIngredient(it, profileId,binding.root)
+        }, databaseIngredientsUtils, activity!!)
         binding.myIngredientsRecycler.layoutManager = LinearLayoutManager(context)
         binding.myIngredientsRecycler.adapter = adapter
-        databaseIngredientsUtils.submitNewList(adapter,profileId)
+        adapter.submitNewList(profileId)
         setupNavigationObservers(viewModel, profileId)
         setupOnClickListeners(viewModel, profileId, binding)
         return binding.root
@@ -83,8 +82,7 @@ class IngredientsFragment : Fragment() {
 
     private fun setupOnClickListeners(viewModel: IngredientsViewModel, profileId: Long, binding: MyIngredientsBinding){
         viewModel.popupView.insert_button.setOnClickListener {
-            databaseIngredientsUtils.insertNewIngredient(
-                adapter,
+            adapter.insertNewIngredient(
                 Ingredient(
                     ingredientText = viewModel.popupView.ingredient_edit.text.toString(),
                     profileId = profileId

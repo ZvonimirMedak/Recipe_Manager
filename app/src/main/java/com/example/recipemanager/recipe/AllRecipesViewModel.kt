@@ -7,9 +7,10 @@ import com.example.recipemanager.appDatabase.Ingredient
 import com.example.recipemanager.appDatabase.IngredientDao
 import com.example.recipemanager.appDatabase.Recipe
 import com.example.recipemanager.appDatabase.RecipeDao
+import com.example.recipemanager.utils.DatabaseRecipeUtils
 import kotlinx.coroutines.*
 
-class AllRecipesViewModel : ViewModel() {
+class AllRecipesViewModel(private val databaseRecipeUtils: DatabaseRecipeUtils) : ViewModel() {
     private val _navigateToRecommendedRecipes = MutableLiveData<Boolean?>()
     val navigateToRecommendedRecipes: LiveData<Boolean?>
         get() = _navigateToRecommendedRecipes
@@ -25,6 +26,18 @@ class AllRecipesViewModel : ViewModel() {
     private val _navigateToFavouriteRecipes = MutableLiveData<Boolean?>()
     val navigateToFavouriteRecipes: LiveData<Boolean?>
         get() = _navigateToFavouriteRecipes
+
+    private val job = Job()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
+
+    fun submitNewList(adapter: AllRecipeRecyclerAdapter) {
+        coroutineScope.launch {
+            val list = databaseRecipeUtils.getRecipes()
+            withContext(Dispatchers.Main) {
+                adapter.submitList(list)
+            }
+        }
+    }
 
     fun navigateToFavouriteRecipes() {
         _navigateToFavouriteRecipes.value = true
@@ -56,5 +69,10 @@ class AllRecipesViewModel : ViewModel() {
 
     fun navigationToMyIngredientsDone() {
         _navigateToMyIngredients.value = null
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        job.cancel()
     }
 }

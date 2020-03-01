@@ -22,13 +22,12 @@ import com.example.recipemanager.ingredients.IngredientsRecyclerAdapter
 import com.example.recipemanager.ingredients.IngredientsViewModel
 import com.example.recipemanager.utils.DatabaseIngredientsUtils
 import com.example.recipemanager.utils.DatabaseRecipeUtils
-import com.example.recipemanager.utils.DatabaseRecipeWithIngredientsUtils
+
 
 class CreateRecipeFragment : Fragment() {
     private lateinit var adapter: IngredientsRecyclerAdapter
     //    private lateinit var recipe: Recipe
-    private lateinit var databaseIngredientsUtils: DatabaseIngredientsUtils
-    private lateinit var databaseRecipeWithIngredientsUtils: DatabaseRecipeWithIngredientsUtils
+    private lateinit var databaseIngredientsUtils : DatabaseIngredientsUtils
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,9 +37,9 @@ class CreateRecipeFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.create_recipe, container, false)
         val application = requireNotNull(this.activity).application
         databaseIngredientsUtils = DatabaseIngredientsUtils(application)
-        databaseRecipeWithIngredientsUtils = DatabaseRecipeWithIngredientsUtils(application)
+        val databaseRecipeUtils = DatabaseRecipeUtils(application)
         val profileId = arguments!!.getLong("profileId", 0)
-        val viewModel = CreateRecipeViewModel(activity!!, binding.root)
+        val viewModel = CreateRecipeViewModel(activity!!, databaseIngredientsUtils, databaseRecipeUtils)
         /*recipe = Recipe(
             name = "Pahuljaste palačinke s vodom",
             description = "Sve ručno miješati, brašno dodavati na kraju, ako je potrebno.",
@@ -49,12 +48,12 @@ class CreateRecipeFragment : Fragment() {
             photoUrl = "https://i.imgur.com/8DeRKmP.jpg"
         )*/
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
-            databaseIngredientsUtils.deleteRecipeIngredient(
+            viewModel.deleteRecipeIngredient(
                 it,
                 adapter = adapter,
                 rootLayout = binding.root
             )
-        })
+        }, databaseIngredientsUtils, activity!!)
         binding.createRecipeIngredientsRecycler.adapter = adapter
         binding.createRecipeIngredientsRecycler.layoutManager = LinearLayoutManager(activity)
         setupOnClickListeners(binding, viewModel, profileId)
@@ -94,7 +93,7 @@ class CreateRecipeFragment : Fragment() {
                     caffeine = binding.caffeineCheck.isChecked,
                     profileId = profileId
                 )
-                databaseRecipeWithIngredientsUtils.insertRecipe(recipe, viewModel)
+                viewModel.insertRecipe(recipe, viewModel, binding.root)
             } else {
                 val recipe = Recipe(
                     name = binding.recipeNameEdit.text.toString(),
@@ -109,13 +108,13 @@ class CreateRecipeFragment : Fragment() {
                     ,
                     photoUrl = binding.photoUrlEdit.text.toString()
                 )
-                databaseRecipeWithIngredientsUtils.insertRecipe(recipe, viewModel)
+                viewModel.insertRecipe(recipe, viewModel, binding.root)
             }
 
         }
         binding.ingredientButton.setOnClickListener {
             if (binding.ingredientEditRecipe.text.toString() != "") {
-                databaseIngredientsUtils.createRecipeIngredient(
+                viewModel.createRecipeIngredient(
                     adapter,
                     Ingredient(
                         ingredientText = binding.ingredientEditRecipe.text.toString(),

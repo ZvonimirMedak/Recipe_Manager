@@ -23,105 +23,14 @@ import kotlinx.coroutines.*
 class DatabaseIngredientsUtils(application: Application) : HideKeyboardUtil{
     private val database = AppDatabase.getInstance(application)
     private val ingredientDao = database.ingredientDao
-    private lateinit var deletePopup : PopupWindow
-    private lateinit var deletePopupView : View
-    private val job = Job()
-    private val coroutineScope = CoroutineScope(job + Dispatchers.IO)
-
-    init {
-        setupPopupWindow(application)
-    }
-    private fun getProfileIngredients(profileId: Long) =
-        ingredientDao.getAllProfileIngredients(profileId)
 
 
-    fun submitNewList(adapter: IngredientsRecyclerAdapter,profileId: Long) {
-        coroutineScope.launch {
-            val list = getProfileIngredients(profileId)
-            withContext(Dispatchers.Main) {
-                adapter.submitList(list)
-            }
-        }
-    }
+    fun getProfileIngredients(profileId: Long) = ingredientDao.getAllProfileIngredients(profileId)
+    fun getRecipeIngredients(recipeId: Long) = ingredientDao.getAllRecipeIngredients(recipeId)
+    fun insertIngredient(ingredient: Ingredient) = ingredientDao.insertIngredient(ingredient)
+    fun deleteIngredient(ingredientId : Long) = ingredientDao.deleteIngredient(ingredientId)
+    fun deleteRecipeIngredients() = ingredientDao.deleteRecipeIngredient(0)
 
-    private fun getRecipeIngredients(recipeId: Long) =
-        ingredientDao.getAllRecipeIngredients(recipeId)
-
-    fun submitRecipeList(adapter: IngredientsRecyclerAdapter,recipeId: Long) {
-        coroutineScope.launch {
-            val list = getRecipeIngredients(recipeId)
-            withContext(Dispatchers.Main) {
-                adapter.submitList(list)
-            }
-        }
-    }
-
-    fun insertNewIngredient(adapter : IngredientsRecyclerAdapter,ingredient: Ingredient, profileId: Long) {
-        coroutineScope.launch {
-            ingredientDao.insertIngredient(ingredient)
-            submitNewList(adapter, profileId)
-        }
-    }
-
-    fun createRecipeIngredient(adapter: IngredientsRecyclerAdapter,ingredient: Ingredient, recipeId: Long = 0) {
-        coroutineScope.launch {
-            ingredientDao.insertIngredient(
-                Ingredient(
-                    ingredientText = ingredient.ingredientText,
-                    recipeId = recipeId
-                )
-            )
-            submitRecipeList(adapter,recipeId)
-        }
-    }
-
-    fun deleteIngredient(ingredientId: Long, profileId: Long, adapter: IngredientsRecyclerAdapter, rootLayout: View) {
-        deletePopup.showAtLocation(rootLayout, Gravity.CENTER, 0, 0)
-        deletePopupView.yes_button.setOnClickListener {
-            coroutineScope.launch {
-                withContext(Dispatchers.IO) {
-                    ingredientDao.deleteIngredient(ingredientId)
-                    submitNewList(adapter,profileId)
-                }
-            }
-
-            deletePopup.dismiss()
-
-        }
-        deletePopupView.no_button.setOnClickListener {
-            deletePopup.dismiss()
-        }
-
-    }
-
-    fun deleteRecipeIngredient(ingredientId: Long, recipeId: Long = 0, adapter: IngredientsRecyclerAdapter,rootLayout : View) {
-        deletePopup.showAtLocation(rootLayout, Gravity.CENTER, 0, 0)
-        deletePopupView.yes_button.setOnClickListener {
-            coroutineScope.launch {
-                withContext(Dispatchers.IO) {
-                    ingredientDao.deleteIngredient(ingredientId)
-                    submitRecipeList(adapter, recipeId)
-                }
-            }
-
-            deletePopup.dismiss()
-
-        }
-        deletePopupView.no_button.setOnClickListener {
-            deletePopup.dismiss()
-        }
-    }
-    private fun setupPopupWindow(application: Application){
-        val inflater = LayoutInflater.from(application)
-        deletePopup = PopupWindow(application)
-        deletePopupView = inflater.inflate(R.layout.popup_delete, null)
-        deletePopup.contentView = deletePopupView
-        deletePopup.isFocusable = true
-        deletePopup.setBackgroundDrawable(
-            ColorDrawable(
-                Color.TRANSPARENT)
-        )
-    }
 
     override fun hideKeyboard(fragment: Fragment) {
         val imm =

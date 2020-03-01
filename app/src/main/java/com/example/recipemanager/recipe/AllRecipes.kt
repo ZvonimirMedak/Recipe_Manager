@@ -26,14 +26,14 @@ class AllRecipesFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val databaseRecipeUtils = DatabaseRecipeUtils(application)
         val profileId = arguments!!.getLong("profileId")
-        val viewModel = AllRecipesViewModel()
+        val viewModel = AllRecipesViewModel(databaseRecipeUtils)
         val adapter = AllRecipeRecyclerAdapter(RecipeOnClickListener {
             viewModel.navigateToDetailedRecipe(it)
         })
         binding.viewModel = viewModel
         binding.recipeRecycler.adapter = adapter
         binding.recipeRecycler.layoutManager = LinearLayoutManager(context)
-        databaseRecipeUtils.submitNewList(adapter)
+        viewModel.submitNewList(adapter)
         setupOnClickListeners(binding, viewModel, profileId)
         setupNavigationObservers(viewModel, profileId)
         return binding.root

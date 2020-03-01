@@ -24,17 +24,17 @@ class FavouriteRecipeFragment : Fragment() {
     ): View? {
         val binding: FavouriteRecipesBinding =
             DataBindingUtil.inflate(inflater, R.layout.favourite_recipes, container, false)
-        val viewModel = FavouriteRecipeViewModel()
         val profileId = arguments!!.getLong("profileId", 0)
         val application = requireNotNull(this.activity).application
         val databaseRecipeUtils = DatabaseRecipeUtils(application)
+        val viewModel = FavouriteRecipeViewModel(databaseRecipeUtils)
         val adapter = AllRecipeRecyclerAdapter(RecipeOnClickListener {
             viewModel.navigateToDetailedRecipe(it)
         })
 
         binding.recipeRecycler.adapter = adapter
         binding.recipeRecycler.layoutManager = LinearLayoutManager(context)
-        databaseRecipeUtils.submitNewFavouriteList(adapter, profileId)
+        viewModel.submitNewFavouriteList(adapter, profileId)
         setupOnClickListeners(binding, viewModel)
         setupNavigationObservers(viewModel, profileId)
         return binding.root
