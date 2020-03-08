@@ -15,6 +15,7 @@
         android:textSize="20sp"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <TextView
         android:id="@+id/yes_button"
         android:layout_width="wrap_content"
