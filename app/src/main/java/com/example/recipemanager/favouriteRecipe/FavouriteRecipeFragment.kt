@@ -11,9 +11,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
+import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.databinding.FavouriteRecipesBinding
 import com.example.recipemanager.recipe.AllRecipeRecyclerAdapter
 import com.example.recipemanager.recipe.RecipeOnClickListener
+import com.example.recipemanager.recommendedRecipe.RecommendedRecipeViewModel
 import com.example.recipemanager.utils.DatabaseRecipeUtils
 
 class FavouriteRecipeFragment : Fragment() {
@@ -24,19 +26,19 @@ class FavouriteRecipeFragment : Fragment() {
     ): View? {
         val binding: FavouriteRecipesBinding =
             DataBindingUtil.inflate(inflater, R.layout.favourite_recipes, container, false)
-        val profileId = arguments!!.getLong("profileId", 0)
+        val profile = arguments!!.getParcelable<Profile>("profile")!!
         val application = requireNotNull(this.activity).application
         val databaseRecipeUtils = DatabaseRecipeUtils(application)
         val viewModel = FavouriteRecipeViewModel(databaseRecipeUtils)
         val adapter = AllRecipeRecyclerAdapter(RecipeOnClickListener {
             viewModel.navigateToDetailedRecipe(it)
-        })
+        }, RecommendedRecipeViewModel(databaseRecipeUtils), profile)
 
         binding.recipeRecycler.adapter = adapter
         binding.recipeRecycler.layoutManager = LinearLayoutManager(context)
-        viewModel.submitNewFavouriteList(adapter, profileId)
+        viewModel.submitNewFavouriteList(adapter, profile.profileId)
         setupOnClickListeners(binding, viewModel)
-        setupNavigationObservers(viewModel, profileId)
+        setupNavigationObservers(viewModel, profile)
         return binding.root
     }
 
@@ -52,12 +54,12 @@ class FavouriteRecipeFragment : Fragment() {
         }
     }
 
-    private fun setupNavigationObservers(viewModel: FavouriteRecipeViewModel, profileId: Long){
+    private fun setupNavigationObservers(viewModel: FavouriteRecipeViewModel, profile: Profile){
         viewModel.navigateToAllRecipes.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 this.findNavController().navigate(
                     FavouriteRecipeFragmentDirections.actionFavouriteRecipeFragmentToAllRecipesFragment2(
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigationToAllRecipesDone()
@@ -68,7 +70,7 @@ class FavouriteRecipeFragment : Fragment() {
                 this.findNavController().navigate(
                     FavouriteRecipeFragmentDirections.actionFavouriteRecipeFragmentToDetailRecipeFragment(
                         it,
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigationToDetailedRecipeDone()
@@ -78,7 +80,7 @@ class FavouriteRecipeFragment : Fragment() {
             if (it == true) {
                 this.findNavController().navigate(
                     FavouriteRecipeFragmentDirections.actionFavouriteRecipeFragmentToIngredientsFragment(
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigationToMyIngredientsDone()
@@ -88,7 +90,7 @@ class FavouriteRecipeFragment : Fragment() {
             if (it == true) {
                 this.findNavController().navigate(
                     FavouriteRecipeFragmentDirections.actionFavouriteRecipeFragmentToRecommendedRecipe2(
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigationToRecommendedRecipesDone()

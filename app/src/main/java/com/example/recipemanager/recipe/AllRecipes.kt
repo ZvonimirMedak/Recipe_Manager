@@ -11,7 +11,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
+import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.databinding.AllRecipesBinding
+import com.example.recipemanager.recommendedRecipe.RecommendedRecipeViewModel
 import com.example.recipemanager.utils.DatabaseRecipeUtils
 
 class AllRecipesFragment : Fragment() {
@@ -25,22 +27,22 @@ class AllRecipesFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.all_recipes, container, false)
         val application = requireNotNull(this.activity).application
         val databaseRecipeUtils = DatabaseRecipeUtils(application)
-        val profileId = arguments!!.getLong("profileId")
+        val profile = arguments!!.getParcelable<Profile>("profile")!!
         val viewModel = AllRecipesViewModel(databaseRecipeUtils)
         val adapter = AllRecipeRecyclerAdapter(RecipeOnClickListener {
             viewModel.navigateToDetailedRecipe(it)
-        })
+        }, RecommendedRecipeViewModel(databaseRecipeUtils), profile)
         binding.viewModel = viewModel
         binding.recipeRecycler.adapter = adapter
         binding.recipeRecycler.layoutManager = LinearLayoutManager(context)
         viewModel.submitNewList(adapter)
-        setupOnClickListeners(binding, viewModel, profileId)
-        setupNavigationObservers(viewModel, profileId)
+        setupOnClickListeners(binding, viewModel, profile)
+        setupNavigationObservers(viewModel, profile)
         return binding.root
     }
 
 
-    private fun setupOnClickListeners(binding: AllRecipesBinding, viewModel: AllRecipesViewModel, profileId : Long){
+    private fun setupOnClickListeners(binding: AllRecipesBinding, viewModel: AllRecipesViewModel, profile: Profile){
         binding.recommendedRecipesButton.setOnClickListener {
             viewModel.navigateToRecommendedRecipes()
         }
@@ -54,19 +56,19 @@ class AllRecipesFragment : Fragment() {
         binding.fabAllRecipes.setOnClickListener {
             this.findNavController().navigate(
                 AllRecipesFragmentDirections.actionAllRecipesFragment2ToCreateRecipeFragment(
-                    profileId
+                    profile
                 )
             )
         }
     }
 
 
-    private fun setupNavigationObservers(viewModel: AllRecipesViewModel, profileId: Long){
+    private fun setupNavigationObservers(viewModel: AllRecipesViewModel, profile: Profile){
         viewModel.navigateToFavouriteRecipes.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 this.findNavController().navigate(
                     AllRecipesFragmentDirections.actionAllRecipesFragment2ToFavouriteRecipeFragment(
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigationToFavouriteRecipesDone()
@@ -76,7 +78,7 @@ class AllRecipesFragment : Fragment() {
             if (it == true) {
                 this.findNavController().navigate(
                     AllRecipesFragmentDirections.actionAllRecipesFragment2ToRecommendedRecipe2(
-                        arguments!!.getLong("profileId", 0)
+                        profile
                     )
                 )
                 viewModel.navigationToRecommendedRecipesDone()
@@ -87,7 +89,7 @@ class AllRecipesFragment : Fragment() {
             if (it == true) {
                 this.findNavController().navigate(
                     AllRecipesFragmentDirections.actionAllRecipesFragment2ToIngredientsFragment(
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigationToMyIngredientsDone()
@@ -99,7 +101,7 @@ class AllRecipesFragment : Fragment() {
                 this.findNavController().navigate(
                     AllRecipesFragmentDirections.actionAllRecipesFragment2ToDetailRecipeFragment(
                         it,
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigationToDetailedRecipeDone()

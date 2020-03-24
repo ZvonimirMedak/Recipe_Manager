@@ -1,7 +1,10 @@
 package com.example.recipemanager.appDatabase
 
+import android.os.Parcelable
 import androidx.room.*
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @Entity(
     tableName = "user_profiles_table",
     foreignKeys = [ForeignKey(
@@ -21,4 +24,4 @@ data class Profile(
     val fructose_intolerance: Boolean,
     @ColumnInfo(name = "Username", index = true)
     val profile_username: String
-)
+):Parcelable

@@ -24,6 +24,7 @@ data class Recipe(
     var description: String,
     var timeToMake: String,
     var typeOfMeal: String,
+    val creator: String,
     val gluten: Boolean = false,
     val lactose: Boolean = false,
     val caffeine: Boolean = false,

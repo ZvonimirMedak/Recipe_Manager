@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.appDatabase.Ingredient
+import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.appDatabase.Recipe
 import com.example.recipemanager.databinding.DetailRecipeBinding
 import com.example.recipemanager.ingredients.IngredientOnClickListener
@@ -36,13 +38,13 @@ class DetailRecipeFragment : Fragment() {
         val binding: DetailRecipeBinding =
             DataBindingUtil.inflate(inflater, R.layout.detail_recipe, container, false)
         val recipe = arguments!!.getParcelable<Recipe>("recipe")
-        val profileId = arguments!!.getLong("profileId")
+        val profile = arguments!!.getParcelable<Profile>("profile")!!
         binding.recipe = recipe
         val application = requireNotNull(this.activity).application
         val databaseIngredientsUtils = DatabaseIngredientsUtils(application)
         val databaseRecipeUtils = DatabaseRecipeUtils(application)
         val viewModel = DetailRecipeViewModel(activity!!,databaseRecipeUtils, databaseIngredientsUtils)
-        viewModel.checkFavourite(recipe!!.recipeId, profileId)
+        viewModel.checkFavourite(recipe!!.recipeId, profile.profileId)
         Glide.with(binding.recipeImage).load(recipe.photoUrl).optionalCenterCrop()
             .into(binding.recipeImage)
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
@@ -50,8 +52,8 @@ class DetailRecipeFragment : Fragment() {
         binding.ingredientsRecipeRecycler.layoutManager = LinearLayoutManager(activity)
         binding.ingredientsRecipeRecycler.adapter = adapter
         adapter.submitRecipeList(recipe.recipeId)
-        setupOnClickListeners(binding,recipe, profileId,viewModel)
-        setupObservers(viewModel, recipe, profileId, binding)
+        setupOnClickListeners(binding,recipe, profile.profileId,viewModel)
+        setupObservers(viewModel, recipe, profile, binding)
         return binding.root
     }
 
@@ -62,9 +64,25 @@ class DetailRecipeFragment : Fragment() {
         binding.editRecipeButton.setOnClickListener {
             viewModel.navigateToEditRecipe()
         }
-        binding.deleteRecipeButton.setOnClickListener {
-            viewModel.deleteRecipe(recipe, profileId)
+        if(profileId == recipe.profileId){
+            binding.commentRecipeButton.isVisible = false
+            binding.deleteRecipeButton.setOnClickListener {
+                viewModel.deleteRecipe(recipe, profileId)
+            }
+            binding.commentButton.setOnClickListener {
+                viewModel.commentRecipe()
+            }
+
         }
+        else{
+            binding.deleteRecipeButton.isVisible = false
+            binding.commentButton.isVisible = false
+            binding.commentRecipeButton.setOnClickListener{
+                viewModel.commentRecipe()
+            }
+        }
+
+
         viewModel.popupView.insert_button.setOnClickListener {
             adapter.insertNewIngredient(
                 Ingredient(
@@ -76,11 +94,11 @@ class DetailRecipeFragment : Fragment() {
         }
     }
 
-    private fun setupObservers(viewModel: DetailRecipeViewModel, recipe: Recipe, profileId: Long, binding: DetailRecipeBinding){
+    private fun setupObservers(viewModel: DetailRecipeViewModel, recipe: Recipe, profile: Profile, binding: DetailRecipeBinding){
         viewModel.navigateToEditRecipe.observe(viewLifecycleOwner, Observer {
             if(it == true){
                 this.findNavController().navigate(
-                    DetailRecipeFragmentDirections.actionDetailRecipeFragmentToEditRecipeFragment(recipe, profileId)
+                    DetailRecipeFragmentDirections.actionDetailRecipeFragmentToEditRecipeFragment(recipe, profile)
                 )
                 viewModel.navigationToEditRecipeDone()
             }
@@ -89,10 +107,19 @@ class DetailRecipeFragment : Fragment() {
             if (it == true) {
                 this.findNavController().navigate(
                     DetailRecipeFragmentDirections.actionDetailRecipeFragmentToAllRecipesFragment2(
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigationToAllRecipesDone()
+            }
+        })
+
+        viewModel.navigateToCommentRecipe.observe(viewLifecycleOwner, Observer {
+            if(it == true){
+                this.findNavController().navigate(
+                    DetailRecipeFragmentDirections.actionDetailRecipeFragmentToRecipeCommentsFragment(profile, recipe)
+                )
+                viewModel.navigatedToComments()
             }
         })
 

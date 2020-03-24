@@ -50,29 +50,29 @@ class RecommendedRecipeViewModel(private val databaseRecipeUtils: DatabaseRecipe
         }
     }
 
-    private fun checkLactose(recipe: Recipe, profile: Profile): Boolean {
-        if (recipe.lactose || profile.lactose_intolerance) {
+    fun checkLactose(recipe: Recipe, profile: Profile): Boolean {
+        if (recipe.lactose) {
             return recipe.lactose == profile.lactose_intolerance
         }
         return false
     }
 
-    private fun checkCaffeine(recipe: Recipe, profile: Profile): Boolean {
-        if (recipe.caffeine || profile.caffeine_intolerance) {
+    fun checkCaffeine(recipe: Recipe, profile: Profile): Boolean {
+        if (recipe.caffeine) {
             return recipe.caffeine == profile.caffeine_intolerance
         }
         return false
     }
 
-    private fun checkGluten(recipe: Recipe, profile: Profile): Boolean {
-        if (recipe.gluten || profile.gluten_intolerance) {
+    fun checkGluten(recipe: Recipe, profile: Profile): Boolean {
+        if (recipe.gluten) {
             return recipe.gluten == profile.gluten_intolerance
         }
         return false
     }
 
-    private fun checkFructose(recipe: Recipe, profile: Profile): Boolean {
-        if (recipe.fructose || profile.fructose_intolerance) {
+    fun checkFructose(recipe: Recipe, profile: Profile): Boolean {
+        if (recipe.fructose) {
             return recipe.fructose == profile.fructose_intolerance
         }
         return false

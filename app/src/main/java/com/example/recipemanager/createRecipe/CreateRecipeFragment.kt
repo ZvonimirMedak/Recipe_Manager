@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.appDatabase.Ingredient
+import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.appDatabase.Recipe
 import com.example.recipemanager.databinding.CreateRecipeBinding
 import com.example.recipemanager.ingredients.IngredientOnClickListener
@@ -38,7 +39,7 @@ class CreateRecipeFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         databaseIngredientsUtils = DatabaseIngredientsUtils(application)
         val databaseRecipeUtils = DatabaseRecipeUtils(application)
-        val profileId = arguments!!.getLong("profileId", 0)
+        val profile = arguments!!.getParcelable<Profile>("profile")!!
         val viewModel = CreateRecipeViewModel(activity!!, databaseIngredientsUtils, databaseRecipeUtils)
         /*recipe = Recipe(
             name = "Pahuljaste palačinke s vodom",
@@ -56,8 +57,8 @@ class CreateRecipeFragment : Fragment() {
         }, databaseIngredientsUtils, activity!!)
         binding.createRecipeIngredientsRecycler.adapter = adapter
         binding.createRecipeIngredientsRecycler.layoutManager = LinearLayoutManager(activity)
-        setupOnClickListeners(binding, viewModel, profileId)
-        setupNavigationObserver(viewModel, profileId)
+        setupOnClickListeners(binding, viewModel, profile)
+        setupNavigationObserver(viewModel, profile)
         setupOnTouchListener(binding, this)
 
         return binding.root
@@ -78,7 +79,7 @@ class CreateRecipeFragment : Fragment() {
     private fun setupOnClickListeners(
         binding: CreateRecipeBinding,
         viewModel: CreateRecipeViewModel,
-        profileId: Long
+        profile: Profile
     ) {
         binding.insertRecipeButton.setOnClickListener {
             if (binding.photoUrlEdit.text.isEmpty()) {
@@ -91,7 +92,8 @@ class CreateRecipeFragment : Fragment() {
                     fructose = binding.fructoseCheck.isChecked,
                     lactose = binding.lactoseCheck.isChecked,
                     caffeine = binding.caffeineCheck.isChecked,
-                    profileId = profileId
+                    profileId = profile.profileId,
+                    creator = profile.profileName
                 )
                 viewModel.insertRecipe(recipe, binding.root)
             } else {
@@ -104,9 +106,10 @@ class CreateRecipeFragment : Fragment() {
                     fructose = binding.fructoseCheck.isChecked,
                     lactose = binding.lactoseCheck.isChecked,
                     caffeine = binding.caffeineCheck.isChecked,
-                    profileId = profileId
+                    profileId = profile.profileId
                     ,
-                    photoUrl = binding.photoUrlEdit.text.toString()
+                    photoUrl = binding.photoUrlEdit.text.toString(),
+                    creator = profile.profileName
                 )
                 viewModel.insertRecipe(recipe, binding.root)
             }
@@ -127,12 +130,12 @@ class CreateRecipeFragment : Fragment() {
         }
     }
 
-    private fun setupNavigationObserver(viewModel: CreateRecipeViewModel, profileId: Long) {
+    private fun setupNavigationObserver(viewModel: CreateRecipeViewModel, profile: Profile) {
         viewModel.navigateToAllRecipes.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 this.findNavController().navigate(
                     CreateRecipeFragmentDirections.actionCreateRecipeFragmentToAllRecipesFragment2(
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigationToAllRecipesDone()

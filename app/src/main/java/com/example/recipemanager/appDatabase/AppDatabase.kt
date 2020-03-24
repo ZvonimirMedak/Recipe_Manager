@@ -7,8 +7,8 @@ import androidx.room.RoomDatabase
 
 
 @Database(
-    entities = [Profile::class, User::class, Recipe::class, Ingredient::class, Favourite::class],
-    version = 13,
+    entities = [Profile::class, User::class, Recipe::class, Ingredient::class, Favourite::class, Comment::class],
+    version = 15,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -17,6 +17,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val userDatabaseDao: UserDatabaseDao
     abstract val recipeDao: RecipeDao
     abstract val ingredientDao: IngredientDao
+    abstract val commentDao : CommentDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null

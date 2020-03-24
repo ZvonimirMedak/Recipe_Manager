@@ -43,7 +43,7 @@ class CreateRecipeViewModel(private val activity: Activity, private val database
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
 
-    fun submitRecipeList(adapter: IngredientsRecyclerAdapter, recipeId: Long) {
+    private fun submitRecipeList(adapter: IngredientsRecyclerAdapter, recipeId: Long) {
         coroutineScope.launch {
             val list = databaseIngredientsUtils.getRecipeIngredients(recipeId)
             withContext(Dispatchers.Main) {
@@ -102,11 +102,13 @@ class CreateRecipeViewModel(private val activity: Activity, private val database
                 Color.TRANSPARENT)
         )
     }
-    fun insertRecipe(recipe: Recipe, rootLayout: View) {
+    fun insertRecipe(recipe: Recipe, rootLayout: View){
 
         coroutineScope.launch {
             if (!checkExistence(recipe.name)) {
+                Log.d("msg", "ne postoji")
                 databaseRecipeUtils.insertRecipe(recipe)
+                Log.d("msg", "ubaceno")
                 var list = databaseIngredientsUtils.getRecipeIngredients(0)
                 val foundRecipe = databaseRecipeUtils.getRecipeByName(recipe.name)
                 createRecipeIngredientsWithDelete(foundRecipe!!, list!!)

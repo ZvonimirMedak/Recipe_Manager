@@ -16,7 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.appDatabase.Ingredient
+import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.appDatabase.Recipe
+import com.example.recipemanager.createRecipe.CreateRecipeViewModel
 import com.example.recipemanager.databinding.CreateRecipeBinding
 import com.example.recipemanager.ingredients.IngredientOnClickListener
 import com.example.recipemanager.ingredients.IngredientsRecyclerAdapter
@@ -34,21 +36,22 @@ class EditRecipeFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View? {
         val binding : CreateRecipeBinding = DataBindingUtil.inflate(inflater, R.layout.create_recipe, container, false)
-        val recipe = arguments!!.getParcelable<Recipe>("recipe")
-        val profileId = arguments!!.getLong("profileId")
+        val recipe = arguments!!.getParcelable<Recipe>("recipe")!!
+        val profile = arguments!!.getParcelable<Profile>("profile")!!
         setupUI(recipe, binding)
         val application = requireNotNull(this.activity).application
         databaseIngredientsUtils = DatabaseIngredientsUtils(application)
         databaseRecipeUtils = DatabaseRecipeUtils(application)
-        val viewModel = EditRecipeViewModel(databaseRecipeUtils)
+        val createRecipeViewModel = CreateRecipeViewModel(activity!!, DatabaseIngredientsUtils(application), databaseRecipeUtils)
+        val viewModel = EditRecipeViewModel(databaseRecipeUtils, recipe, binding.root, createRecipeViewModel )
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
-            adapter.deleteRecipeIngredient(it, recipe!!.recipeId, binding.root)
+            adapter.deleteRecipeIngredient(it, recipe.recipeId, binding.root)
         }, databaseIngredientsUtils, activity!!)
         binding.createRecipeIngredientsRecycler.adapter = adapter
         binding.createRecipeIngredientsRecycler.layoutManager = LinearLayoutManager(activity)
-        adapter.submitRecipeList(recipe!!.recipeId)
-        setupOnClickListeners(binding, viewModel, recipe)
-        setupNavigationObserver(viewModel, profileId)
+        adapter.submitRecipeList(recipe.recipeId)
+        setupOnClickListeners(binding, viewModel, recipe, profile)
+        setupNavigationObserver(viewModel, profile, createRecipeViewModel)
         setupOnTouchListener(binding, this)
         return binding.root
     }
@@ -64,17 +67,24 @@ class EditRecipeFragment : Fragment(){
 
     }
 
-    private fun setupNavigationObserver(viewModel: EditRecipeViewModel, profileId : Long){
+    private fun setupNavigationObserver(viewModel: EditRecipeViewModel, profile: Profile, createRecipeViewModel: CreateRecipeViewModel){
         viewModel.navigateToDetailRecipe.observe(viewLifecycleOwner, Observer {
             if(it != null) {
                 this.findNavController().navigate(
                     EditRecipeFragmentDirections.actionEditRecipeFragmentToDetailRecipeFragment(
                         it,
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigationToDetailRecipeDone()
             }})
+        createRecipeViewModel.navigateToAllRecipes.observe(viewLifecycleOwner, Observer {
+            if(it == true){
+                this.findNavController().navigate(
+                    EditRecipeFragmentDirections.actionEditRecipeFragmentToAllRecipesFragment2(profile)
+                )
+            }
+        })
     }
 
     private fun setupUI(recipe: Recipe?, binding : CreateRecipeBinding) {
@@ -90,7 +100,7 @@ class EditRecipeFragment : Fragment(){
         binding.insertRecipeButton.setText(R.string.update)
     }
 
-    private fun setupOnClickListeners(binding: CreateRecipeBinding, viewModel: EditRecipeViewModel, recipe: Recipe){
+    private fun setupOnClickListeners(binding: CreateRecipeBinding, viewModel: EditRecipeViewModel, recipe: Recipe, profile: Profile){
         binding.ingredientButton.setOnClickListener {
             adapter.createRecipeIngredient(Ingredient(ingredientText = binding.ingredientEditRecipe.text.toString(), recipeId = recipe.recipeId), recipe.recipeId)
             binding.ingredientEditRecipe.text.clear()
@@ -100,8 +110,9 @@ class EditRecipeFragment : Fragment(){
             viewModel.updateRecipe(Recipe(
                 recipeId = recipe.recipeId, name = binding.recipeNameEdit.text.toString(), timeToMake = binding.timeToMakeEdit.text.toString(),
                 typeOfMeal = binding.typeOfMealEdit.text.toString(), photoUrl = binding.photoUrlEdit.text.toString(), description = binding.descriptionEdit.text.toString(),
-                gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked, caffeine = binding.caffeineCheck.isChecked
-            ))
+                gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked, caffeine = binding.caffeineCheck.isChecked,
+                creator = profile.profileName
+            ), profile)
         }
     }
 }

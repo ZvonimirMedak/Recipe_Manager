@@ -32,6 +32,10 @@ class DetailRecipeViewModel(private val activity: Activity, private val database
     val navigateToEditRecipe : LiveData<Boolean?>
     get() = _navigateToEditRecipe
 
+    private val _navigateToCommentRecipe = MutableLiveData<Boolean?>()
+    val navigateToCommentRecipe : LiveData<Boolean?>
+    get() = _navigateToCommentRecipe
+
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
 
@@ -49,6 +53,13 @@ class DetailRecipeViewModel(private val activity: Activity, private val database
             }
         }
 
+    }
+    fun commentRecipe(){
+        _navigateToCommentRecipe.value = true
+    }
+
+    fun navigatedToComments(){
+        _navigateToCommentRecipe.value = null
     }
 
     fun deleteRecipe(recipe: Recipe, profileId: Long) {

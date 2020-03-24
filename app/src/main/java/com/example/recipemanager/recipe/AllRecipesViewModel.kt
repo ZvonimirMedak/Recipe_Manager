@@ -1,5 +1,6 @@
 package com.example.recipemanager.recipe
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -33,6 +34,7 @@ class AllRecipesViewModel(private val databaseRecipeUtils: DatabaseRecipeUtils) 
     fun submitNewList(adapter: AllRecipeRecyclerAdapter) {
         coroutineScope.launch {
             val list = databaseRecipeUtils.getRecipes()
+            Log.d("msg", list.toString())
             withContext(Dispatchers.Main) {
                 adapter.submitList(list)
             }

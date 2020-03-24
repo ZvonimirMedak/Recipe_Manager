@@ -96,8 +96,8 @@
         android:name="com.example.recipemanager.recipe.AllRecipesFragment"
         android:label="AllRecipesFragment" >
         <argument
-            android:name="profileId"
-            app:argType="long" />
+            android:name="profile"
+            app:argType="com.example.recipemanager.appDatabase.Profile" />
         <action
             android:id="@+id/action_allRecipesFragment2_to_recommendedRecipe2"
             app:destination="@id/recommendedRecipe2"
@@ -133,8 +133,8 @@
         android:name="com.example.recipemanager.recommendedRecipe.RecommendedRecipe"
         android:label="RecommendedRecipe" >
         <argument
-            android:name="profileId"
-            app:argType="long" />
+            android:name="profile"
+            app:argType="com.example.recipemanager.appDatabase.Profile" />
         <action
             android:id="@+id/action_recommendedRecipe2_to_allRecipesFragment2"
             app:destination="@id/allRecipesFragment2"
@@ -175,15 +175,15 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_enter_anim"
             app:popUpTo="@+id/recommendedRecipe2" />
-        <argument
-            android:name="profileId"
-            app:argType="long" />
         <action
             android:id="@+id/action_ingredientsFragment_to_favouriteRecipeFragment"
             app:destination="@id/favouriteRecipeFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popUpTo="@+id/recommendedRecipe2" />
+        <argument
+            android:name="profile"
+            app:argType="com.example.recipemanager.appDatabase.Profile" />
     </fragment>
     <fragment
         android:id="@+id/detailRecipeFragment"
@@ -207,8 +207,8 @@
             android:name="recipe"
             app:argType="com.example.recipemanager.appDatabase.Recipe" />
         <argument
-            android:name="profileId"
-            app:argType="long" />
+            android:name="profile"
+            app:argType="com.example.recipemanager.appDatabase.Profile" />
         <action
             android:id="@+id/action_detailRecipeFragment_to_favouriteRecipeFragment"
             app:destination="@id/favouriteRecipeFragment"
@@ -219,6 +219,11 @@
         <action
             android:id="@+id/action_detailRecipeFragment_to_editRecipeFragment"
             app:destination="@id/editRecipeFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_detailRecipeFragment_to_recipeCommentsFragment"
+            app:destination="@id/recipeCommentsFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
     </fragment>
@@ -234,8 +239,8 @@
             app:popUpTo="@+id/allRecipesFragment2"
             app:popUpToInclusive="true" />
         <argument
-            android:name="profileId"
-            app:argType="long" />
+            android:name="profile"
+            app:argType="com.example.recipemanager.appDatabase.Profile" />
     </fragment>
     <fragment
         android:id="@+id/favouriteRecipeFragment"
@@ -247,8 +252,8 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
         <argument
-            android:name="profileId"
-            app:argType="long" />
+            android:name="profile"
+            app:argType="com.example.recipemanager.appDatabase.Profile" />
         <action
             android:id="@+id/action_favouriteRecipeFragment_to_ingredientsFragment"
             app:destination="@id/ingredientsFragment"
@@ -282,7 +287,26 @@
             android:name="recipe"
             app:argType="com.example.recipemanager.appDatabase.Recipe" />
         <argument
-            android:name="profileId"
-            app:argType="long" />
+            android:name="profile"
+            app:argType="com.example.recipemanager.appDatabase.Profile" />
+        <action
+            android:id="@+id/action_editRecipeFragment_to_allRecipesFragment2"
+            app:destination="@id/allRecipesFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/recipeCommentsFragment"
+        android:name="com.example.recipemanager.recipeComments.RecipeCommentsFragment"
+        android:label="RecipeCommentsFragment" >
+        <action
+            android:id="@+id/action_recipeCommentsFragment_to_detailRecipeFragment"
+            app:destination="@id/detailRecipeFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <argument
+            android:name="profile"
+            app:argType="com.example.recipemanager.appDatabase.Profile" />
+        <argument
+            android:name="recipe"
+            app:argType="com.example.recipemanager.appDatabase.Recipe" />
     </fragment>
 </navigation>

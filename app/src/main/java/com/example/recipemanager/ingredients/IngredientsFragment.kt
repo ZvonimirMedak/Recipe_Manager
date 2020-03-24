@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipemanager.R
 import com.example.recipemanager.appDatabase.AppDatabase
 import com.example.recipemanager.appDatabase.Ingredient
+import com.example.recipemanager.appDatabase.Profile
 import com.example.recipemanager.databinding.MyIngredientsBinding
 import com.example.recipemanager.utils.DatabaseIngredientsUtils
 import kotlinx.android.synthetic.main.popup.view.*
@@ -31,26 +32,26 @@ class IngredientsFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.my_ingredients, container, false)
         val application = requireNotNull(this.activity).application
         val databaseIngredientsUtils = DatabaseIngredientsUtils(application)
-        val profileId = arguments!!.getLong("profileId", 0)
+        val profile = arguments!!.getParcelable<Profile>("profile")!!
         val viewModel = IngredientsViewModel(activity!!)
         adapter = IngredientsRecyclerAdapter(IngredientOnClickListener {
-            adapter.deleteIngredient(it, profileId,binding.root)
+            adapter.deleteIngredient(it, profile.profileId,binding.root)
         }, databaseIngredientsUtils, activity!!)
         binding.myIngredientsRecycler.layoutManager = LinearLayoutManager(context)
         binding.myIngredientsRecycler.adapter = adapter
-        adapter.submitNewList(profileId)
-        setupNavigationObservers(viewModel, profileId)
-        setupOnClickListeners(viewModel, profileId, binding)
+        adapter.submitNewList(profile.profileId)
+        setupNavigationObservers(viewModel, profile)
+        setupOnClickListeners(viewModel, profile.profileId, binding)
         return binding.root
 
     }
 
-    private fun setupNavigationObservers(viewModel: IngredientsViewModel, profileId: Long) {
+    private fun setupNavigationObservers(viewModel: IngredientsViewModel, profile: Profile) {
         viewModel.navigateToAllRecipes.observe(viewLifecycleOwner, Observer {
         if (it == true) {
             this.findNavController().navigate(
                 IngredientsFragmentDirections.actionIngredientsFragmentToAllRecipesFragment2(
-                    profileId
+                    profile
                 )
             )
             viewModel.navigationToAllRecipesDone()
@@ -61,7 +62,7 @@ class IngredientsFragment : Fragment() {
             if (it == true) {
                 this.findNavController().navigate(
                     IngredientsFragmentDirections.actionIngredientsFragmentToRecommendedRecipe2(
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigationToRecommendedRecipesDone()
@@ -71,7 +72,7 @@ class IngredientsFragment : Fragment() {
             if (it == true) {
                 this.findNavController().navigate(
                     IngredientsFragmentDirections.actionIngredientsFragmentToFavouriteRecipeFragment(
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigationToFavouriteRecipesDone()

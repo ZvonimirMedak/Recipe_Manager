@@ -25,6 +25,8 @@ import kotlin.math.log
 
 class DetailProfileFragment : Fragment() {
 
+    lateinit var profile: Profile
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,14 +40,14 @@ class DetailProfileFragment : Fragment() {
         val databaseProfileUtils = DatabaseProfileUtils(application)
         val viewModel = DetailProfileViewModel(databaseProfileUtils)
         viewModel.getProfileFromDatabase(profileId)
-        setupNavigationObservers(viewModel, username!!, profileId)
+        setupNavigationObservers(viewModel, username!!)
         setupOnClickListeners(binding, viewModel, profileId)
         setupProfileObserver(viewModel, binding)
 
         return binding.root
     }
 
-    private fun setupNavigationObservers(viewModel : DetailProfileViewModel, username : String, profileId : Long){
+    private fun setupNavigationObservers(viewModel : DetailProfileViewModel, username : String){
 
         viewModel.navigateToProfileFragment.observe(this, Observer {
             if (it == true) {
@@ -62,7 +64,7 @@ class DetailProfileFragment : Fragment() {
             if (it == true) {
                 this.findNavController().navigate(
                     DetailProfileFragmentDirections.actionDetailProfileFragmentToRecommendedRecipe2(
-                        profileId
+                        profile
                     )
                 )
                 viewModel.navigateToRecipesDone()
@@ -73,6 +75,7 @@ class DetailProfileFragment : Fragment() {
     private fun setupProfileObserver(viewModel: DetailProfileViewModel, binding: ProfileDetailBinding){
         viewModel.currentProfile.observe(this, Observer {
             if (it != null) {
+                profile = viewModel.currentProfile.value!!
                 bind(it, binding)
             }
         })
