@@ -29,6 +29,9 @@ data class Recipe(
     val lactose: Boolean = false,
     val caffeine: Boolean = false,
     val fructose: Boolean = false,
+    val sulfite: Boolean = false,
+    val vegan: Boolean = false,
+    val vegetarian: Boolean = false,
     @ColumnInfo(index = true)
     val profileId: Long? = null
 ) : Parcelable

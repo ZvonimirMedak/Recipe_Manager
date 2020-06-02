@@ -91,17 +91,18 @@ class RecipeCommentsRecyclerAdapter(private val databaseCommentUtils: DatabaseCo
             }
         }
     }
-    fun insertComment(text: String, profile: Profile, recipeId: Long){
-        if(text != "") {
+    fun insertComment(comment: Comment){
+        if(comment.commentText != "") {
             coroutineScope.launch {
                 databaseCommentUtils.insertComment(
                     Comment(
                         profileName = profile.profileName,
-                        recipeId = recipeId,
-                        commentText = text
+                        recipeId = comment.recipeId,
+                        commentText = comment.commentText,
+                        rating =  comment.rating
                     )
                 )
-                val list = databaseCommentUtils.getComments(recipeId)
+                val list = databaseCommentUtils.getComments(comment.recipeId)
                 withContext(Dispatchers.Main) {
                     submitList(list)
                 }
@@ -133,6 +134,23 @@ class RecipeCommentsRecyclerAdapter(private val databaseCommentUtils: DatabaseCo
             }
             binding.deleteComment.setOnClickListener{
                 adapter.deleteComment(item)
+            }
+            when (item.rating){
+                1 -> binding.star1.setImageResource(R.drawable.round_star_black_18dp)
+                2 ->{binding.star1.setImageResource(R.drawable.round_star_black_18dp)
+                    binding.star2.setImageResource(R.drawable.round_star_black_18dp)}
+                3 ->{ binding.star1.setImageResource(R.drawable.round_star_black_18dp)
+                    binding.star2.setImageResource(R.drawable.round_star_black_18dp)
+                    binding.star3.setImageResource(R.drawable.round_star_black_18dp)}
+                4 ->{binding.star1.setImageResource(R.drawable.round_star_black_18dp)
+                    binding.star2.setImageResource(R.drawable.round_star_black_18dp)
+                    binding.star3.setImageResource(R.drawable.round_star_black_18dp)
+                    binding.star4.setImageResource(R.drawable.round_star_black_18dp)}
+                5 ->{binding.star1.setImageResource(R.drawable.round_star_black_18dp)
+                    binding.star2.setImageResource(R.drawable.round_star_black_18dp)
+                    binding.star3.setImageResource(R.drawable.round_star_black_18dp)
+                    binding.star4.setImageResource(R.drawable.round_star_black_18dp)
+                    binding.star5.setImageResource(R.drawable.round_star_black_18dp)}
             }
             binding.comment = item
             binding.executePendingBindings()

@@ -97,7 +97,9 @@ class DetailProfileFragment : Fragment() {
         bindLactose(profile, binding)
         bindCaffeine(profile, binding)
         bindFructose(profile, binding)
-
+        bindSulfite(profile, binding)
+        bindVegan(profile, binding)
+        bindVegetarian(profile, binding)
     }
 
     private fun bindLactose(profile: Profile?, binding: ProfileDetailBinding) {
@@ -129,6 +131,30 @@ class DetailProfileFragment : Fragment() {
             binding.fructoseIntoleranceDetail.setText(getString(R.string.fructose_intolerant))
         } else {
             binding.fructoseIntoleranceDetail.setText(getString(R.string.fructose_tolerant))
+        }
+    }
+
+    private fun bindSulfite(profle: Profile?, binding: ProfileDetailBinding){
+        if(profile.sulfite_intolerance){
+            binding.sulfiteIntoleranceDetail.setText(getString(R.string.sulfite_intolerant))
+        } else{
+            binding.sulfiteIntoleranceDetail.setText(getString(R.string.sulfite_tolerant))
+        }
+    }
+
+    private fun bindVegan(profile: Profile?, binding: ProfileDetailBinding){
+        if(profile!!.vegan){
+            binding.veganDetail.setText(getString(R.string.vegan))
+        } else{
+            binding.veganDetail.setText(getString(R.string.not_vegan))
+        }
+    }
+
+    private fun bindVegetarian(profile: Profile?, binding: ProfileDetailBinding){
+        if(profile!!.vegetarian){
+            binding.vegetarianDetail.setText(getString(R.string.vegetarian))
+        } else{
+            binding.vegetarianDetail.setText(getString(R.string.not_vegetarian))
         }
     }
 }

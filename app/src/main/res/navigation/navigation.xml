@@ -291,17 +291,16 @@
             app:argType="com.example.recipemanager.appDatabase.Profile" />
         <action
             android:id="@+id/action_editRecipeFragment_to_allRecipesFragment2"
-            app:destination="@id/allRecipesFragment2" />
+            app:destination="@id/allRecipesFragment2"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popUpTo="@+id/detailRecipeFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/recipeCommentsFragment"
         android:name="com.example.recipemanager.recipeComments.RecipeCommentsFragment"
         android:label="RecipeCommentsFragment" >
-        <action
-            android:id="@+id/action_recipeCommentsFragment_to_detailRecipeFragment"
-            app:destination="@id/detailRecipeFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim" />
         <argument
             android:name="profile"
             app:argType="com.example.recipemanager.appDatabase.Profile" />

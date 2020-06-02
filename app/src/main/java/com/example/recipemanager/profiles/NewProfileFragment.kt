@@ -38,7 +38,7 @@ class NewProfileFragment : Fragment() {
     }
 
     private fun setupTouchListener(binding: AddNewProfileBinding, fragment : NewProfileFragment) {
-        binding.root.setOnTouchListener(object : View.OnTouchListener{
+        binding.profileScroll.setOnTouchListener(object : View.OnTouchListener{
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 databaseProfileUtils.hideKeyboard(fragment)
                 return false
@@ -69,6 +69,9 @@ class NewProfileFragment : Fragment() {
         list.add(gluten_intolerance_check.isChecked)
         list.add(caffeine_intolerance_check.isChecked)
         list.add(fructose_intolerance_check.isChecked)
+        list.add(sulfite_intolerance_check.isChecked)
+        list.add(vegan_check.isChecked)
+        list.add(vegetarian_check.isChecked)
         return list
 
     }

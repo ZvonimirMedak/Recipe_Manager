@@ -38,16 +38,53 @@
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/baseline_delete_outline_black_18dp"
         android:layout_marginLeft="10dp"/>
-    <ScrollView
-        app:layout_constraintTop_toBottomOf="@id/profile_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
         <TextView
+            app:layout_constraintTop_toBottomOf="@id/profile_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="60dp"
-            android:text="@{comment.commentText}"/>
-    </ScrollView>
+            android:text="@{comment.commentText}"
+            android:layout_marginBottom="40dp"/>
+    <ImageView
+        android:id="@+id/star_5"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/round_star_border_black_18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+    <ImageView
+        android:id="@+id/star_3"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/round_star_border_black_18dp"
+        app:layout_constraintEnd_toStartOf="@id/star_4"
+        />
+    <ImageView
+        android:id="@+id/star_4"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/round_star_border_black_18dp"
+        app:layout_constraintEnd_toStartOf="@id/star_5"
+        />
+    <ImageView
+        android:id="@+id/star_2"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/round_star_border_black_18dp"
+        app:layout_constraintEnd_toStartOf="@id/star_3"
+        />
+    <ImageView
+        android:id="@+id/star_1"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/round_star_border_black_18dp"
+        app:layout_constraintEnd_toStartOf="@id/star_2"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

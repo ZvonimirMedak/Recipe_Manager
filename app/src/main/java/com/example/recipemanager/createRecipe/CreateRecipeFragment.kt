@@ -92,6 +92,9 @@ class CreateRecipeFragment : Fragment() {
                     fructose = binding.fructoseCheck.isChecked,
                     lactose = binding.lactoseCheck.isChecked,
                     caffeine = binding.caffeineCheck.isChecked,
+                    sulfite = binding.sulfiteCheck.isChecked,
+                    vegan = binding.veganCreateCheck.isChecked,
+                    vegetarian = binding.vegetarianCreateCheck.isChecked,
                     profileId = profile.profileId,
                     creator = profile.profileName
                 )
@@ -106,8 +109,10 @@ class CreateRecipeFragment : Fragment() {
                     fructose = binding.fructoseCheck.isChecked,
                     lactose = binding.lactoseCheck.isChecked,
                     caffeine = binding.caffeineCheck.isChecked,
-                    profileId = profile.profileId
-                    ,
+                    sulfite = binding.sulfiteCheck.isChecked,
+                    vegan = binding.veganCreateCheck.isChecked,
+                    vegetarian = binding.vegetarianCreateCheck.isChecked,
+                    profileId = profile.profileId,
                     photoUrl = binding.photoUrlEdit.text.toString(),
                     creator = profile.profileName
                 )

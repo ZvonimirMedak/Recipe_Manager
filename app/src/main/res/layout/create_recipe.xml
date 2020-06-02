@@ -111,6 +111,39 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/caffeine_text" />
 
+            <TextView
+                android:id="@+id/sulfite_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/sulfite"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fructose_text" />
+
+            <TextView
+                android:id="@+id/vegan_create_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/vegan"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sulfite_text" />
+
+            <TextView
+                android:id="@+id/vegetarian_create_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/vegetarian"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/vegan_create_text" />
+
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/gluten_check"
                 android:layout_width="wrap_content"
@@ -151,6 +184,36 @@
                 app:layout_constraintLeft_toRightOf="@id/fructose_text"
                 app:layout_constraintTop_toBottomOf="@id/caffeine_check" />
 
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/sulfite_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="150dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/sulfite_text"
+                app:layout_constraintTop_toBottomOf="@id/fructose_check" />
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/vegan_create_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="150dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/vegan_create_text"
+                app:layout_constraintTop_toBottomOf="@id/sulfite_check" />
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/vegetarian_create_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="150dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/vegetarian_create_text"
+                app:layout_constraintTop_toBottomOf="@id/vegan_create_check" />
+
             <TextView
                 android:id="@+id/ingredients_text"
                 android:layout_width="match_parent"
@@ -159,7 +222,7 @@
                 android:layout_marginTop="15dp"
                 android:text="@string/ingredients"
                 android:textSize="24sp"
-                app:layout_constraintTop_toBottomOf="@id/fructose_check" />
+                app:layout_constraintTop_toBottomOf="@id/vegetarian_create_text" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/create_recipe_ingredients_recycler"

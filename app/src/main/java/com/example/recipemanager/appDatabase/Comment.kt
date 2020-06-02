@@ -11,5 +11,6 @@ data class Comment(
     val commentId: Long = 0L,
     val profileName: String,
     val commentText: String,
-    val recipeId: Long
+    val recipeId: Long,
+    val rating : Int
 )

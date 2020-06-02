@@ -16,7 +16,9 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:onClick="@{() -> onClickListener.onClick(ingredient)}"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@drawable/rounded_edge"
+        android:layout_marginTop="10dp">
 
         <TextView
             android:id="@+id/ingredient_text"

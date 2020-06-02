@@ -46,5 +46,12 @@
     <string name="update">Update</string>
     <string name="ok">OK</string>
     <string name="write_your_own_comment">Write your own comment</string>
-
+    <string name="sulfite_intolerance">Sulfite intolerance</string>
+    <string name="vegan">Vegan</string>
+    <string name="vegetarian">Vegetarian</string>
+    <string name="sulfite_tolerant">Sulfite tolerant</string>
+    <string name="sulfite_intolerant">Sulfite intolerant</string>
+    <string name="not_vegan">Not vegan</string>
+    <string name="not_vegetarian">Not vegetarian</string>
+    <string name="sulfite">Sulfite</string>
 </resources>

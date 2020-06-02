@@ -22,6 +22,9 @@ data class Profile(
     val gluten_intolerance: Boolean,
     val caffeine_intolerance: Boolean,
     val fructose_intolerance: Boolean,
+    val sulfite_intolerance: Boolean,
+    val vegan: Boolean,
+    val vegetarian: Boolean,
     @ColumnInfo(name = "Username", index = true)
     val profile_username: String
 ):Parcelable

@@ -41,7 +41,8 @@ class AllRecipeRecyclerAdapter(
         fun bind(item: Recipe, onClickListener: RecipeOnClickListener) {
             binding.recipe = item
             if(!recommendedRecipeViewModel.checkCaffeine(item, profile) && !recommendedRecipeViewModel.checkFructose(item, profile) &&
-                        !recommendedRecipeViewModel.checkGluten(item,profile) && !recommendedRecipeViewModel.checkLactose(item, profile)){
+                        !recommendedRecipeViewModel.checkGluten(item,profile) && !recommendedRecipeViewModel.checkLactose(item, profile) &&!recommendedRecipeViewModel.checkSulfite(item, profile) &&
+                !recommendedRecipeViewModel.checkVegan(item, profile) && !recommendedRecipeViewModel.checkVegetarian(item, profile)){
                 binding.recipeTitle.setTextColor(Color.GREEN)
             }
             else{

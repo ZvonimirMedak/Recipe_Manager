@@ -97,6 +97,9 @@ class EditRecipeFragment : Fragment(){
         binding.lactoseCheck.isChecked = recipe.lactose
         binding.caffeineCheck.isChecked = recipe.caffeine
         binding.fructoseCheck.isChecked = recipe.fructose
+        binding.sulfiteCheck.isChecked = recipe.sulfite
+        binding.veganCreateCheck.isChecked = recipe.vegan
+        binding.vegetarianCreateCheck.isChecked = recipe.vegetarian
         binding.insertRecipeButton.setText(R.string.update)
     }
 
@@ -111,7 +114,7 @@ class EditRecipeFragment : Fragment(){
                 recipeId = recipe.recipeId, name = binding.recipeNameEdit.text.toString(), timeToMake = binding.timeToMakeEdit.text.toString(),
                 typeOfMeal = binding.typeOfMealEdit.text.toString(), photoUrl = binding.photoUrlEdit.text.toString(), description = binding.descriptionEdit.text.toString(),
                 gluten = binding.glutenCheck.isChecked, fructose = binding.fructoseCheck.isChecked, lactose = binding.lactoseCheck.isChecked, caffeine = binding.caffeineCheck.isChecked,
-                creator = profile.profileName
+                creator = profile.profileName, sulfite = binding.sulfiteCheck.isChecked, vegan = binding.veganCreateCheck.isChecked, vegetarian = binding.vegetarianCreateCheck.isChecked
             ), profile)
         }
     }

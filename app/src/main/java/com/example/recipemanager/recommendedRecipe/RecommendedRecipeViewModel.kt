@@ -39,6 +39,7 @@ class RecommendedRecipeViewModel(private val databaseRecipeUtils: DatabaseRecipe
                         recipe,
                         profile
                     ) && !checkGluten(recipe, profile) && !checkLactose(recipe, profile)
+                    && !checkSulfite(recipe,profile) && !checkVegan(recipe, profile) && !checkVegetarian(recipe, profile)
                 ) {
                     recommendedRecipes.add(recipe)
                 }
@@ -74,6 +75,27 @@ class RecommendedRecipeViewModel(private val databaseRecipeUtils: DatabaseRecipe
     fun checkFructose(recipe: Recipe, profile: Profile): Boolean {
         if (recipe.fructose) {
             return recipe.fructose == profile.fructose_intolerance
+        }
+        return false
+    }
+
+    fun checkSulfite(recipe: Recipe, profile: Profile): Boolean {
+        if(recipe.sulfite){
+            return recipe.sulfite == profile.sulfite_intolerance
+        }
+        return false
+    }
+
+    fun checkVegan(recipe: Recipe, profile: Profile): Boolean {
+        if(recipe.vegan){
+            return recipe.vegan == profile.vegan
+        }
+        return false
+    }
+
+    fun checkVegetarian(recipe: Recipe, profile: Profile): Boolean{
+        if(recipe.vegetarian){
+            return recipe.vegetarian == profile.vegetarian
         }
         return false
     }
